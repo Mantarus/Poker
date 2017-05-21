@@ -9,6 +9,22 @@ public class Card {
         this.value = value;
     }
 
+    public CardSuit getSuit() {
+        return suit;
+    }
+
+    public CardValue getValue() {
+        return value;
+    }
+
+    public boolean isGreaterThan(Card card) {
+        return this.getValue().getValue() > card.getValue().getValue();
+    }
+
+    public boolean isEqualTo(Card card) {
+        return this.getValue().getValue() == card.getValue().getValue();
+    }
+
     @Override
     public String toString() {
         return suit.getRepresentation() + value.getRepresentation();

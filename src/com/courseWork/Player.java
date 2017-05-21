@@ -1,0 +1,68 @@
+package com.courseWork;
+
+import jdk.internal.org.objectweb.asm.commons.RemappingAnnotationAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Player {
+
+    private Strategy strategy;
+    private Hand hand;
+    private Integer balance;
+    private Integer currentStake;
+    private Ranking currentRanking;
+    private List<Card> combination;
+
+    public Player() {
+        this.hand = new Hand(new ArrayList<>());
+    }
+
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
+
+    public Integer getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Integer balance) {
+        this.balance = balance;
+    }
+
+    public Integer getCurrentStake() {
+        return currentStake;
+    }
+
+    public void setCurrentStake(Integer currentStake) {
+        this.currentStake = currentStake;
+    }
+
+    public Ranking getCurrentRanking() {
+        return currentRanking;
+    }
+
+    public void setCurrentRanking(Ranking currentRanking) {
+        this.currentRanking = currentRanking;
+    }
+
+    public List<Card> getCombination() {
+        return combination;
+    }
+
+    public void setCombination(List<Card> combination) {
+        this.combination = combination;
+    }
+}

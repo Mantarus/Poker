@@ -19,6 +19,9 @@ public class CardDeck {
     }
 
     public Card pop() {
+        if (isEmpty()) {
+            throw new RuntimeException("Can't pop a card from the empty deck");
+        }
         return cards.remove(0);
     }
 
