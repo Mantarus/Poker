@@ -1,6 +1,6 @@
 package com.courseWork;
 
-public enum CardValue {
+public enum CardRank {
     TWO(2, "2"),
     THREE(3, "3"),
     FOUR(4, "4"),
@@ -26,7 +26,7 @@ public enum CardValue {
         return representation;
     }
 
-    CardValue(Integer value, String representation) {
+    CardRank(Integer value, String representation) {
         this.value = value;
         this.representation = representation;
     }

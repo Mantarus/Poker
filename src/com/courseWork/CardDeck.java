@@ -11,7 +11,7 @@ public class CardDeck {
     public CardDeck() {
         cards = new LinkedList<>();
         for (CardSuit suit : CardSuit.values()) {
-            for (CardValue value : CardValue.values()) {
+            for (CardRank value : CardRank.values()) {
                 cards.add(new Card(suit, value));
             }
         }
