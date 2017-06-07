@@ -16,9 +16,12 @@ public abstract class RankingUtil {
         checkHighCard(player, cards);
         checkPairs(player, cards);
         checkThreeOfAKind(player, cards);
-        checkFourOfAKind(player, cards);
         checkStraight(player, cards);
         checkFlush(player, cards);
+        checkFullHouse(player, cards);
+        checkFourOfAKind(player, cards);
+        checkStraightFlush(player, cards);
+        checkRoyalFlush(player, cards);
     }
 
     private static void checkHighCard(Player player, List<Card> cards) {
@@ -34,7 +37,7 @@ public abstract class RankingUtil {
 
     private static void checkPairs(Player player, List<Card> cards) {
         // Try to find the first pair of cards
-        List<Card> pairedCards = findHighestSameCards(cards, 2);
+        List<Card> pairedCards = findHighestSameRanked(cards, 2);
 
         // If not found, do nothing
         if (pairedCards.isEmpty()) {
@@ -51,7 +54,7 @@ public abstract class RankingUtil {
         remainingCards.removeAll(pairedCards);
 
         // Try to find the second pair of cards and add it to resulting combination
-        pairedCards.addAll(findHighestSameCards(remainingCards, 2));
+        pairedCards.addAll(findHighestSameRanked(remainingCards, 2));
         // If found and added, set current player combination and ranking
         if (pairedCards.size() == 4) {
             player.setCurrentRanking(Ranking.TWO_PAIRS);
@@ -59,12 +62,9 @@ public abstract class RankingUtil {
     }
 
     private static void checkThreeOfAKind(Player player, List<Card> cards) {
-        List<Card> threeOfAKind = findHighestSameCards(cards, 3);
+        List<Card> threeOfAKind = findHighestSameRanked(cards, 3);
 
-        if (!threeOfAKind.isEmpty()) {
-            player.setCombination(threeOfAKind);
-            player.setCurrentRanking(Ranking.THREE_OF_A_KIND);
-        }
+        setCombination(threeOfAKind, player, Ranking.THREE_OF_A_KIND);
     }
 
     private static void checkStraight(Player player, List<Card> cards) {
@@ -72,22 +72,62 @@ public abstract class RankingUtil {
         List<Card> straightHigh = findHighestSequence(cards, 5, false, Card.aceHighComparator);
         List<Card> resultStraight = !straightHigh.isEmpty() ? straightHigh : straightLow;
 
-        if (!resultStraight.isEmpty()) {
-            player.setCombination(resultStraight);
-            player.setCurrentRanking(Ranking.STRAIGHT);
+        setCombination(resultStraight, player, Ranking.STRAIGHT);
+    }
+
+    private static void checkFlush(Player player, List<Card> cards) {
+        List<Card> flush = findHighestSameSuited(cards, 5);
+
+        setCombination(flush, player, Ranking.FLUSH);
+    }
+
+    private static void checkFullHouse(Player player, List<Card> cards) {
+        List<Card> fullHouse = new ArrayList<>();
+        List<Card> remainingCards = new ArrayList<>(cards);
+        List<Card> threeOfAKind = findHighestSameRanked(remainingCards, 3);
+        remainingCards.removeAll(threeOfAKind);
+        List<Card> pair = findHighestSameRanked(remainingCards, 2);
+
+        if (!threeOfAKind.isEmpty() && !pair.isEmpty()) {
+            fullHouse.addAll(threeOfAKind);
+            fullHouse.addAll(pair);
         }
+
+        setCombination(fullHouse, player, Ranking.FULL_HOUSE);
     }
 
     private static void checkFourOfAKind(Player player, List<Card> cards) {
-        List<Card> fourOfAKind = findHighestSameCards(cards, 4);
+        List<Card> fourOfAKind = findHighestSameRanked(cards, 4);
 
-        if (!fourOfAKind.isEmpty()) {
-            player.setCombination(fourOfAKind);
-            player.setCurrentRanking(Ranking.FOUR_OF_A_KIND);
+        setCombination(fourOfAKind, player, Ranking.FOUR_OF_A_KIND);
+    }
+
+    private static void checkStraightFlush(Player player, List<Card> cards) {
+        List<Card> straightLow = findHighestSequence(cards, 5, true, Card.aceLowComparator);
+        List<Card> straightHigh = findHighestSequence(cards, 5, true, Card.aceHighComparator);
+        List<Card> resultStraight = !straightHigh.isEmpty() ? straightHigh : straightLow;
+
+        setCombination(resultStraight, player, Ranking.STRAIGHT_FLUSH);
+    }
+
+    private static void checkRoyalFlush(Player player, List<Card> cards) {
+        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator);
+
+        straight.forEach(card -> {
+            if (card.getRank().equals(CardRank.ACE)) {
+                setCombination(straight, player, Ranking.ROYAL_FLUSH);
+            }
+        });
+    }
+
+    private static void setCombination(List<Card> combination, Player player, Ranking ranking) {
+        if (!combination.isEmpty()) {
+            player.setCombination(combination);
+            player.setCurrentRanking(ranking);
         }
     }
 
-    private static List<Card> findHighestSameCards(List<Card> cards, Integer size) {
+    private static List<Card> findHighestSameRanked(List<Card> cards, Integer size) {
         List<Card> result = new ArrayList<>();
 
         for (Card first : cards) {
@@ -108,11 +148,26 @@ public abstract class RankingUtil {
         return result;
     }
 
+    private static List<Card> findHighestSameSuited(List<Card> cards, Integer size) {
+        List<Card> result = new ArrayList<>();
+        List<Card> cardsOrdered = getOrderedList(cards, Card.aceHighComparator, true);
+
+        for (Card first : cards) {
+            for (Card card : cards) {
+                if (card.getSuit().equals(first.getSuit())) {
+                    result.add(card);
+                    if (result.size() == size) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
     private static List<Card> findHighestSequence(List<Card> cards, Integer size, Boolean compareSuits, Comparator<Card> comparator) {
         List<Card> result = new ArrayList<>();
-        List<Card> cardsOrdered = cards.stream()
-                .sorted(comparator.reversed())
-                .collect(Collectors.toList());
+        List<Card> cardsOrdered = getOrderedList(cards, comparator, true);
 
         Card previousCard = cardsOrdered.get(0);
         for (int i = 1; i < cardsOrdered.size(); i++) {
@@ -135,6 +190,10 @@ public abstract class RankingUtil {
         return new ArrayList<>();
     }
 
-
+    private static List<Card> getOrderedList(List<Card> cards, Comparator<Card> comparator, Boolean reversed) {
+        return cards.stream()
+                .sorted(reversed ? comparator.reversed() : comparator)
+                .collect(Collectors.toList());
+    }
 
 }

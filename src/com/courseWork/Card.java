@@ -36,7 +36,7 @@ public class Card {
         return suit.getRepresentation() + rank.getRepresentation();
     }
 
-    public static Comparator<Card> aceLowComparator = (card1, card2) -> {
+    public static final Comparator<Card> aceLowComparator = (card1, card2) -> {
         if (card1.getRank().equals(card2.getRank())) {
             return 0;
         }
@@ -49,5 +49,5 @@ public class Card {
         return card1.getRankToInt().compareTo(card2.getRankToInt());
     };
 
-    public static Comparator<Card> aceHighComparator = Comparator.comparing(Card::getRankToInt);
+    public static final Comparator<Card> aceHighComparator = Comparator.comparing(Card::getRankToInt);
 }
