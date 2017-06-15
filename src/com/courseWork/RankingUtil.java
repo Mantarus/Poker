@@ -145,7 +145,8 @@ public abstract class RankingUtil {
         List<Card> result = new ArrayList<>();
 
         for (Card first : cards) {
-            List<Card> group = Collections.singletonList(first);
+            List<Card> group = new ArrayList<>();
+            group.add(first);
             for (Card card : cards) {
                 if (card != first && card.isEqualTo(first)) {
                     group.add(card);
@@ -175,10 +176,12 @@ public abstract class RankingUtil {
                     }
                 }
             }
+            result.clear();
         }
         return new ArrayList<>();
     }
 
+    //TODO Fix findHighestSequence() for ace as smallest card
     private static List<Card> findHighestSequence(List<Card> cards, Integer size, Boolean compareSuits, Comparator<Card> comparator) {
         List<Card> result = new ArrayList<>();
         List<Card> cardsOrdered = getOrderedList(cards, comparator, true);
