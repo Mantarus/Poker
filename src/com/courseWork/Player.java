@@ -1,7 +1,5 @@
 package com.courseWork;
 
-import jdk.internal.org.objectweb.asm.commons.RemappingAnnotationAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +11,7 @@ public class Player {
     private Integer currentStake;
     private Ranking currentRanking;
     private List<Card> combination;
+    private List<Card> kickers;
 
     public Player() {
         this.hand = new Hand(new ArrayList<>());
@@ -64,5 +63,13 @@ public class Player {
 
     public void setCombination(List<Card> combination) {
         this.combination = combination;
+    }
+
+    public List<Card> getKickers() {
+        return kickers;
+    }
+
+    public void setKickers(List<Card> kickers) {
+        this.kickers = kickers;
     }
 }

@@ -22,6 +22,7 @@ public abstract class RankingUtil {
         checkFourOfAKind(player, cards);
         checkStraightFlush(player, cards);
         checkRoyalFlush(player, cards);
+        checkKickers(player, cards);
     }
 
     private static void checkHighCard(Player player, List<Card> cards) {
@@ -118,6 +119,19 @@ public abstract class RankingUtil {
                 setCombination(straight, player, Ranking.ROYAL_FLUSH);
             }
         });
+    }
+
+    private static void checkKickers(Player player, List<Card> cards) {
+        List<Card> remainingCards = new ArrayList<>(cards);
+        remainingCards.removeAll(player.getCombination());
+        remainingCards = getOrderedList(remainingCards, Card.aceHighComparator, true);
+
+        List<Card> kickers = new ArrayList<>();
+        for (int i = 0; i < 5 - player.getCombination().size(); i++) {
+            kickers.add(remainingCards.get(i));
+        }
+
+        player.setKickers(kickers);
     }
 
     private static void setCombination(List<Card> combination, Player player, Ranking ranking) {
