@@ -1,4 +1,4 @@
-package com.courseWork;
+package com.mantarus.poker;
 
 import java.util.Comparator;
 
