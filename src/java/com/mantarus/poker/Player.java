@@ -1,6 +1,5 @@
 package com.mantarus.poker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -14,7 +13,7 @@ public class Player {
     private List<Card> kickers;
 
     public Player() {
-        this.hand = new Hand(new ArrayList<>());
+        this.hand = new Hand();
     }
 
     public Strategy getStrategy() {

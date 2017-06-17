@@ -181,7 +181,7 @@ public abstract class RankingUtil {
         return new ArrayList<>();
     }
 
-    //TODO Fix findHighestSequence() for ace as smallest card
+    // TODO: Fix findHighestSequence() for ace as smallest card
     private static List<Card> findHighestSequence(List<Card> cards, Integer size, Boolean compareSuits, Comparator<Card> comparator) {
         List<Card> result = new ArrayList<>();
         List<Card> cardsOrdered = getOrderedList(cards, comparator, true);

@@ -1,43 +1,58 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.exceptions.PokerException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class Board {
 
+    public final static int MIN_PLAYERS = 2;
+    public final static int MAX_PLAYERS = 22;
+
     private List<Player> players;
-    private CardDeck deck;
     private List<Card> communityCards;
     private Integer bank;
+    private boolean isAlive;
 
-    public Board(Integer playerCount, Integer balance) {
-        if (playerCount < 2 || playerCount > 22) {
-            throw new IllegalArgumentException("Invalid number of players!");
-        }
-
-        deck = new CardDeck();
-
+    public Board() {
         players = new ArrayList<>();
-        for (int i = 0; i < playerCount; i++) {
-            Player player = new Player();
-            player.setBalance(balance);
-            players.add(player);
+    }
+
+    public Board sit(Player player) {
+        if (players.size() == MAX_PLAYERS) {
+            throw new PokerException("Too many players");
         }
+
+        players.add(player);
+        updateIsAlive();
+        return this;
     }
 
-    //Deal cards before the game
+    public Board leave(Player player) {
+        players.remove(player);
+        updateIsAlive();
+        return this;
+    }
+
+    /**
+     * Deal cards before the game
+     */
     public void deal() {
-        players.forEach(player -> IntStream.range(0, 2).forEach(i -> player.getHand().getCards().add(deck.pop())));
-        IntStream.range(0, 3).forEach(i -> communityCards.add(deck.pop()));
+        CardDeck deck = new CardDeck();
+        deck.dealToPlayers(players);
+        deck.dealToCommunity(communityCards);
     }
 
-    //Reset cards after the game
+    /**
+     * Reset cards after the game
+     */
     public void reset() {
-        players.forEach(player -> player.setHand(new Hand(new ArrayList<>())));
+        players.forEach(player -> player.getHand().reset());
         communityCards = new ArrayList<>();
-        deck = new CardDeck();
     }
 
-
+    private void updateIsAlive() {
+        isAlive = players.size() >= MIN_PLAYERS;
+    }
 }

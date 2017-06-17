@@ -1,5 +1,7 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.exceptions.PokerException;
+
 import java.util.Comparator;
 
 public class Card {
@@ -7,6 +9,13 @@ public class Card {
     private CardRank rank;
 
     public Card(CardSuit suit, CardRank rank) {
+        if (suit == null) {
+            throw new PokerException("Suit cannot be null");
+        }
+        if (rank == null) {
+            throw new PokerException("Rank cannot be null");
+        }
+
         this.suit = suit;
         this.rank = rank;
     }
@@ -37,13 +46,13 @@ public class Card {
     }
 
     public static final Comparator<Card> aceLowComparator = (card1, card2) -> {
-        if (card1.getRank().equals(card2.getRank())) {
+        if (card1.getRank() == card2.getRank()) {
             return 0;
         }
-        if (card1.getRank().equals(CardRank.ACE)) {
+        if (card1.getRank() == CardRank.ACE) {
             return -1;
         }
-        if (card2.getRank().equals(CardRank.ACE)) {
+        if (card2.getRank() == CardRank.ACE) {
             return 1;
         }
         return card1.getRankToInt().compareTo(card2.getRankToInt());
