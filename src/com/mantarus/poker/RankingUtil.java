@@ -69,11 +69,12 @@ public abstract class RankingUtil {
     }
 
     private static void checkStraight(Player player, List<Card> cards) {
-        List<Card> straightLow = findHighestSequence(cards, 5, false, Card.aceLowComparator);
-        List<Card> straightHigh = findHighestSequence(cards, 5, false, Card.aceHighComparator);
-        List<Card> resultStraight = !straightHigh.isEmpty() ? straightHigh : straightLow;
+        List<Card> straight = findHighestSequence(cards, 5, false, Card.aceHighComparator);
+        if (straight.isEmpty()) {
+            straight = findHighestSequence(cards, 5, false, Card.aceLowComparator);
+        }
 
-        setCombination(resultStraight, player, Ranking.STRAIGHT);
+        setCombination(straight, player, Ranking.STRAIGHT);
     }
 
     private static void checkFlush(Player player, List<Card> cards) {
@@ -104,11 +105,12 @@ public abstract class RankingUtil {
     }
 
     private static void checkStraightFlush(Player player, List<Card> cards) {
-        List<Card> straightLow = findHighestSequence(cards, 5, true, Card.aceLowComparator);
-        List<Card> straightHigh = findHighestSequence(cards, 5, true, Card.aceHighComparator);
-        List<Card> resultStraight = !straightHigh.isEmpty() ? straightHigh : straightLow;
+        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator);
+        if (straight.isEmpty()) {
+            straight = findHighestSequence(cards, 5, true, Card.aceLowComparator);
+        }
 
-        setCombination(resultStraight, player, Ranking.STRAIGHT_FLUSH);
+        setCombination(straight, player, Ranking.STRAIGHT_FLUSH);
     }
 
     private static void checkRoyalFlush(Player player, List<Card> cards) {
@@ -181,7 +183,6 @@ public abstract class RankingUtil {
         return new ArrayList<>();
     }
 
-    // TODO: Fix findHighestSequence() for ace as smallest card
     private static List<Card> findHighestSequence(List<Card> cards, Integer size, Boolean compareSuits, Comparator<Card> comparator) {
         List<Card> result = new ArrayList<>();
         List<Card> cardsOrdered = getOrderedList(cards, comparator, true);
@@ -190,7 +191,7 @@ public abstract class RankingUtil {
         for (int i = 1; i < cardsOrdered.size(); i++) {
             Card nextCard = cardsOrdered.get(i);
 
-            if (nextCard.getRankToInt() - previousCard.getRankToInt() == 1 && (!compareSuits || nextCard.getSuit().equals(previousCard.getSuit()))) {
+            if (previousCard.isNextTo(nextCard) && (!compareSuits || nextCard.getSuit().equals(previousCard.getSuit()))) {
                 if (result.size() == 0) {
                     result.add(previousCard);
                 }
@@ -198,7 +199,7 @@ public abstract class RankingUtil {
                 if (result.size() == size) {
                     return result;
                 }
-            } else {
+            } else if (previousCard.getRankToInt() != nextCard.getRankToInt()) {
                 result.clear();
             }
 

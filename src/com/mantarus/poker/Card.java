@@ -40,6 +40,13 @@ public class Card {
         return this.getRankToInt().equals(card.getRankToInt());
     }
 
+    public boolean isNextTo(Card card) {
+        if (card.getRank() == CardRank.ACE && this.getRank() == CardRank.TWO) {
+            return true;
+        }
+        return this.getRankToInt() - card.getRankToInt() == 1;
+    }
+
     @Override
     public String toString() {
         return suit.getRepresentation() + rank.getRepresentation();
