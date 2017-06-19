@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 public class CardDeck {
 
     public final static int NUMBER_OF_PLAYER_CARDS = 2;
-    public final static int NUMBER_OF_COMMUNITY_CARDS = 3;
+    public final static int NUMBER_OF_COMMUNITY_CARDS = 5;
 
     private List<Card> cards;
 
