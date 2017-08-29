@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package main.java.com.mantarus.poker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class Main {
             CardDeck deck = new CardDeck();
             Player player = new Player();
 
-            player.getHand().reset();
+            player.setHand(new Hand(new ArrayList<>()));
             for (int i = 0; i < 2; i++) {
                 player.getHand().getCards().add(deck.pop());
             }

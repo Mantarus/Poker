@@ -1,6 +1,6 @@
-package com.mantarus.poker;
+package main.java.com.mantarus.poker;
 
-import com.mantarus.poker.exceptions.PokerException;
+import main.java.com.mantarus.poker.exceptions.PokerException;
 
 import java.util.ArrayList;
 import java.util.Collections;

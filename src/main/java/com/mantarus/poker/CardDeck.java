@@ -1,6 +1,6 @@
-package com.mantarus.poker;
+package main.java.com.mantarus.poker;
 
-import com.mantarus.poker.exceptions.PokerException;
+import main.java.com.mantarus.poker.exceptions.PokerException;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,8 +9,8 @@ import java.util.stream.IntStream;
 
 public class CardDeck {
 
-    public final static int NUMBER_OF_PLAYER_CARDS = 2;
-    public final static int NUMBER_OF_COMMUNITY_CARDS = 5;
+    //TODO: Should be moved to Board
+
 
     private List<Card> cards;
 
@@ -40,22 +40,6 @@ public class CardDeck {
             throw new PokerException("Can't pop a card from the empty deck");
         }
         return cards.remove(0);
-    }
-
-    public void dealToPlayers(List<Player> players) {
-        IntStream.range(0, NUMBER_OF_PLAYER_CARDS)
-                .forEach(i -> players.forEach(p -> p.getHand().addCard(pop())));
-    }
-
-    public void dealToCommunity(List<Card> community, int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Amount of cards can be only a positive value");
-        }
-        if (amount + community.size() > NUMBER_OF_COMMUNITY_CARDS) {
-            throw new IllegalArgumentException("Amount of community cards after dealing can't be more than maximum value");
-        }
-        IntStream.range(0, amount)
-                .forEach(i -> community.add(pop()));
     }
 
     public CardDeck push(Card card) {

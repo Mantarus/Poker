@@ -1,4 +1,4 @@
-package com.mantarus.poker.exceptions;
+package main.java.com.mantarus.poker.exceptions;
 
 public class PokerException extends RuntimeException {
 

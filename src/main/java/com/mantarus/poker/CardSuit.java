@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package main.java.com.mantarus.poker;
 
 public enum CardSuit {
     HEARTS("♥"),
