@@ -31,7 +31,7 @@ public class Main {
             CardDeck deck = new CardDeck();
             Player player = new Player();
 
-            player.setHand(new Hand(new ArrayList<>()));
+            player.getHand().reset();
             for (int i = 0; i < 2; i++) {
                 player.getHand().getCards().add(deck.pop());
             }
