@@ -1,4 +1,4 @@
-package main.java.com.mantarus.poker;
+package com.mantarus.poker;
 
 public interface Strategy {
 }

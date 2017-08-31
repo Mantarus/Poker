@@ -1,4 +1,4 @@
-package main.java.com.mantarus.poker;
+package com.mantarus.poker;
 
 import java.util.ArrayList;
 import java.util.List;

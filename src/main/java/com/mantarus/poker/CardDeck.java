@@ -1,11 +1,10 @@
-package main.java.com.mantarus.poker;
+package com.mantarus.poker;
 
-import main.java.com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.exceptions.PokerException;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class CardDeck {
 
