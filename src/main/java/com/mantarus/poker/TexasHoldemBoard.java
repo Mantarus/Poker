@@ -15,10 +15,19 @@ public class TexasHoldemBoard {
     public final static int NUMBER_OF_COMMUNITY_CARDS = 5;
 
     private CardDeck deck = new CardDeck();
-    private List<Player> players = new ArrayList<>();
+    private PlayersQueue players = new PlayersQueue();
+    //TODO: Do smth to make the dealer useful
+    private Player dealer = players.current();
     private List<Card> communityCards;
     private Integer bank;
     private boolean alive;
+
+    public void initiateGame(int playersCount, int initialBalance) {
+        for (int i = 0; i < playersCount; i++) {
+            Player player = new Player(initialBalance);
+            sit(player);
+        }
+    }
 
     public void sit(Player player) {
         if (players.size() == MAX_PLAYERS) {
@@ -33,6 +42,34 @@ public class TexasHoldemBoard {
         players.remove(player);
         updateIsAlive();
         return this;
+    }
+
+    public void kickLosers() {
+        for (Player player : players) {
+            if (player.getBalance() <= 0) {
+                leave(player);
+            }
+        }
+    }
+
+    public List<Player> getWinners() {
+        List<Player> winners = new ArrayList<>();
+
+        for (Player player : players) {
+            if (winners.isEmpty()) {
+                winners.add(player);
+                continue;
+            }
+            Player other = winners.get(0);
+            Integer comparingResult = RankingUtil.combinationComparator.compare(player, other);
+            if (comparingResult > 0) {
+                winners.clear();
+            } if (comparingResult >= 0) {
+                winners.add(player);
+            }
+        }
+
+        return winners;
     }
 
     /**
@@ -88,10 +125,6 @@ public class TexasHoldemBoard {
 
     private void updateIsAlive() {
         alive = players.size() >= MIN_PLAYERS;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
     }
 
     public Integer getBank() {

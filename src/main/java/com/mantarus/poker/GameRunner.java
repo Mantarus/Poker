@@ -8,15 +8,10 @@ import java.util.List;
  */
 public class GameRunner {
     private TexasHoldemBoard board;
-    //TODO: Do smth to make the dealer useful
-    private Player dealer;
 
-    public void initiateGame(int playersCount, int initialBalance) {
+    public void startGame(int playersCount, int initialBalance) {
         board = new TexasHoldemBoard();
-        for (int i = 0; i < playersCount; i++) {
-            Player player = new Player(initialBalance);
-            board.sit(player);
-        }
+        board.initiateGame(playersCount, initialBalance);
         run();
     }
 
@@ -35,16 +30,12 @@ public class GameRunner {
             river();
             trade(bet);
             showdown();
-            List<Player> winners = getWinners();
+            List<Player> winners = board.getWinners();
             int increment = board.getBank() / winners.size();
             for (Player winner : winners) {
                 board.incrementBalance(winner, increment);
             }
-            for (Player player : board.getPlayers()) {
-                if (player.getBalance() <= 0) {
-                    board.leave(player);
-                }
-            }
+            board.kickLosers();
         }
     }
 
@@ -121,26 +112,6 @@ public class GameRunner {
 
     }
 
-    private List<Player> getWinners() {
-        List<Player> players = board.getPlayers();
-        List<Player> winners = new ArrayList<>();
-
-        for (Player player : players) {
-            if (winners.isEmpty()) {
-                winners.add(player);
-                continue;
-            }
-            Player other = winners.get(0);
-            Integer comparingResult = RankingUtil.combinationComparator.compare(player, other);
-            if (comparingResult > 0) {
-                winners.clear();
-            } if (comparingResult >= 0) {
-                winners.add(player);
-            }
-        }
-
-        return winners;
-    }
 }
 
 
