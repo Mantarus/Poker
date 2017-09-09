@@ -5,20 +5,19 @@ import java.util.List;
 public class Player {
 
     private Strategy strategy;
-    private Hand hand;
-    private int balance;
-    private int currentStake;
-    private Ranking currentRanking;
-    private List<Card> combination;
-    private List<Card> kickers;
+    private PlayerInfo playerInfo = new PlayerInfo();
 
     public Player() {
-        this.hand = new Hand();
+        this.playerInfo.hand = new Hand();
     }
 
     public Player(int balance) {
         this();
-        this.balance = balance;
+        this.playerInfo.balance = balance;
+    }
+
+    public void trade(int stake) {
+        strategy.trade(stake, playerInfo, boardInfo);
     }
 
     public Strategy getStrategy() {
@@ -30,50 +29,96 @@ public class Player {
     }
 
     public Hand getHand() {
-        return hand;
+        return playerInfo.hand;
     }
 
     public void setHand(Hand hand) {
-        this.hand = hand;
+        this.playerInfo.hand = hand;
     }
 
-    public Integer getBalance() {
-        return balance;
+    public boolean isFolded() {
+        return playerInfo.folded;
+    }
+
+    public void setFolded(boolean folded) {
+        this.playerInfo.folded = folded;
+    }
+
+    public int getBalance() {
+        return playerInfo.balance;
     }
 
     public void setBalance(Integer balance) {
-        this.balance = balance;
+        this.playerInfo.balance = balance;
     }
 
-    public Integer getCurrentStake() {
-        return currentStake;
+    public int getCurrentStake() {
+        return playerInfo.currentStake;
     }
 
     public void setCurrentStake(Integer currentStake) {
-        this.currentStake = currentStake;
+        this.playerInfo.currentStake = currentStake;
     }
 
     public Ranking getCurrentRanking() {
-        return currentRanking;
+        return playerInfo.currentRanking;
     }
 
     public void setCurrentRanking(Ranking currentRanking) {
-        this.currentRanking = currentRanking;
+        this.playerInfo.currentRanking = currentRanking;
     }
 
     public List<Card> getCombination() {
-        return combination;
+        return playerInfo.combination;
     }
 
     public void setCombination(List<Card> combination) {
-        this.combination = combination;
+        this.playerInfo.combination = combination;
     }
 
     public List<Card> getKickers() {
-        return kickers;
+        return playerInfo.kickers;
     }
 
     public void setKickers(List<Card> kickers) {
-        this.kickers = kickers;
+        this.playerInfo.kickers = kickers;
+    }
+
+    private class PlayerInfo {
+        private Hand hand;
+        private boolean folded;
+        private int balance;
+        private int currentStake;
+        private Ranking currentRanking;
+        private List<Card> combination;
+        private List<Card> kickers;
+
+        public Hand getHand() {
+            return hand;
+        }
+
+        public boolean isFolded() {
+            return folded;
+        }
+
+        public int getBalance() {
+            return balance;
+        }
+
+        public int getCurrentStake() {
+            return currentStake;
+        }
+
+        public Ranking getCurrentRanking() {
+            return currentRanking;
+        }
+
+        public List<Card> getCombination() {
+            return combination;
+        }
+
+        public List<Card> getKickers() {
+            return kickers;
+        }
     }
 }

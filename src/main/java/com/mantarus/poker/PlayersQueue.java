@@ -23,6 +23,10 @@ public class PlayersQueue implements Iterable<Player>{
         current = this.players.get(0);
     }
 
+    public List<Player> getAsList() {
+        return new ArrayList<>(players);
+    }
+
     public int size() {
         return players.size();
     }

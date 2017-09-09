@@ -102,7 +102,28 @@ public class GameRunner {
      * The size of a bet for this round, and the final betting round, is doubled
      */
     private void trade(int bet) {
+        List<Player> players = board.getPlayers().getAsList();
+        while (!checkBetEquality(players)) {
+            while (board.getPlayers().next().isFolded()) {
+            }
+            Player player = board.getPlayers().current();
+            player.trade(bet);
+            if (!player.isFolded()) {
+                bet = player.getCurrentStake();
+            }
+        }
+    }
 
+    private boolean checkBetEquality(List<Player> players) {
+        if (players.isEmpty()) {
+            return true;
+        }
+        int bet = players.get(0).getCurrentStake();
+        for (Player player : players) {
+            if (player.getCurrentStake() != bet)
+                return false;
+        }
+        return true;
     }
 
     /**

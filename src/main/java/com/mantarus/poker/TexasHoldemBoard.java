@@ -127,6 +127,10 @@ public class TexasHoldemBoard {
         alive = players.size() >= MIN_PLAYERS;
     }
 
+    public PlayersQueue getPlayers() {
+        return players;
+    }
+
     public Integer getBank() {
         return bank;
     }
