@@ -1,6 +1,7 @@
 package com.mantarus.poker;
 
 import java.util.List;
+import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
 
 public class Player {
 
@@ -16,7 +17,19 @@ public class Player {
         this.playerInfo.balance = balance;
     }
 
-    public void trade(int stake) {
+    public Integer playSmallBlind(int bet) {
+        setCurrentStake(bet);
+        playerInfo.balance -= bet;
+        return bet;
+    }
+
+    public Integer playBigBlind(int bet) {
+        setCurrentStake(bet * 2);
+        playerInfo.balance -= bet * 2;
+        return bet * 2;
+    }
+
+    public void trade(int stake, BoardInfo boardInfo) {
         strategy.trade(stake, playerInfo, boardInfo);
     }
 
@@ -84,7 +97,7 @@ public class Player {
         this.playerInfo.kickers = kickers;
     }
 
-    private class PlayerInfo {
+    public class PlayerInfo {
         private Hand hand;
         private boolean folded;
         private int balance;

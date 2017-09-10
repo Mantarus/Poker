@@ -10,6 +10,7 @@ public class PlayersQueue implements Iterable<Player>{
 
     private List<Player> players;
     private Player current;
+    private Player dealer;
 
     public PlayersQueue() {
         players = new ArrayList<>();
@@ -21,6 +22,7 @@ public class PlayersQueue implements Iterable<Player>{
             throw new IllegalArgumentException("Argument can't be empty");
         }
         current = this.players.get(0);
+        dealer = current;
     }
 
     public List<Player> getAsList() {
@@ -39,6 +41,7 @@ public class PlayersQueue implements Iterable<Player>{
         if (players.add(p)) {
             if (players.isEmpty()) {
                 current = p;
+                dealer = current;
             }
         }
     }
@@ -47,12 +50,19 @@ public class PlayersQueue implements Iterable<Player>{
         players.add(idx, p);
         if (players.isEmpty()) {
             current = p;
+            dealer = current;
         }
     }
 
     public boolean remove(Player p) {
-        if (p == current) {
-            next();
+        if (p == current || p == dealer) {
+            Player next = next();
+            if (p == current) {
+                current = next;
+            }
+            if (p == dealer) {
+                dealer = next;
+            }
         }
         return players.remove(p);
     }
@@ -72,6 +82,15 @@ public class PlayersQueue implements Iterable<Player>{
         int nextIdx = (players.indexOf(current) + 1) % players.size();
         current = players.get(nextIdx);
         return current;
+    }
+
+    public Player rotateDealer() {
+        if (players.isEmpty()) {
+            return null;
+        }
+        int nextIdx = (players.indexOf(dealer) + 1) % players.size();
+        dealer = players.get(nextIdx);
+        return dealer;
     }
 
     @Override

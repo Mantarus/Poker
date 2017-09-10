@@ -17,7 +17,6 @@ public class TexasHoldemBoard {
     private CardDeck deck = new CardDeck();
     private PlayersQueue players = new PlayersQueue();
     //TODO: Do smth to make the dealer useful
-    private Player dealer = players.current();
     private List<Card> communityCards;
     private Integer bank;
     private boolean alive;
@@ -133,5 +132,21 @@ public class TexasHoldemBoard {
 
     public Integer getBank() {
         return bank;
+    }
+
+    public void setBank(Integer bank) {
+        this.bank = bank;
+    }
+
+    public void clearBank() {
+        bank = 0;
+    }
+
+    BoardInfo getInfo() {
+        return new BoardInfo();
+    }
+
+    public class BoardInfo {
+
     }
 }

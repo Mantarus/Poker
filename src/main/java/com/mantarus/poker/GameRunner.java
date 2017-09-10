@@ -1,6 +1,5 @@
 package com.mantarus.poker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,43 +17,71 @@ public class GameRunner {
     public void run() {
         while (board.isAlive()) {
             board.reset();
-            playBlinds();
             //TODO: Initialize bet properly and fix initial bets for trade rounds
             int bet = 42;
+            playBlinds(bet);
             board.dealToPlayers();
-            preFlop();
+            preFlop(bet);
             flop();
             trade(bet);
             turn();
-            trade(bet);
+            trade(bet * 2);
             river();
-            trade(bet);
+            trade(bet * 2);
             showdown();
             List<Player> winners = board.getWinners();
             int increment = board.getBank() / winners.size();
             for (Player winner : winners) {
                 board.incrementBalance(winner, increment);
             }
+            board.clearBank();
             board.kickLosers();
+            board.getPlayers().rotateDealer();
         }
     }
 
     /**
      * Put out the blinds
+     *
+     * There are two blinds in Holdem - a small blind and a big blind.
+     * The player directly to the left of the dealer puts out the small blind.
+     *
+     * The big blind (exactly, or conveniently close to, double that of the small blind)
+     * is placed by the player to the left of the small blind.
      */
-    private void playBlinds() {
-
+    private void playBlinds(int blind) {
+        board.setBank(board.getBank() + board.getPlayers().next().playSmallBlind(blind));
+        board.setBank(board.getBank() + board.getPlayers().next().playBigBlind(blind));
     }
 
     /**
      * The first trading round
      *
+     * When all players receive their hole cards, you are now in the preflop betting round.
+     * Each player must look at their cards and decide what action they would like to take.
+     * In Hold'em, only one player can act at a time.
+     *
+     * The preflop betting round starts with the player to the left of the big blind. This player has three options:
+     * 1. Fold: They pay nothing to the pot and throw away their hand, waiting for the next deal to play again.
+     * 2. Call: They match the amount of the big blind.
+     * 3. Raise: They raise the bet by doubling the amount of the big blind. A player may raise more depending on the betting style being played.
+     *
+     * Once a player has made their action, the player to the left of them gets their turn to act.
+     * Each player is given the same options: fold, call the bet of the player to their right
+     * (if the previous player raised, that is the amount you must call) or raise.
+     *
+     * A raise is always the amount of one bet in addition to the amount of the previous bet,
+     * for example: if the big blind is 25¢, and the first player to act would like to raise, they put in a total of 50¢
+     * (the big blind + one additional bet).
+     *
+     * If the next player would like to reraise, they would put in a total of 75¢ (the previous bet + one additional bet).
+     *
      * A betting round ends when two conditions are met:
-     * All players have had a chance to act.
-     * All players who haven't folded have bet the same amount of money for the round.
+     * 1. All players have had a chance to act.
+     * 2. All players who haven't folded have bet the same amount of money for the round.
      */
-    private void preFlop() {
-
+    private void preFlop(int bet) {
+        trade(bet);
     }
 
     /**
@@ -107,10 +134,14 @@ public class GameRunner {
             while (board.getPlayers().next().isFolded()) {
             }
             Player player = board.getPlayers().current();
-            player.trade(bet);
+            player.trade(bet, board.getInfo());
             if (!player.isFolded()) {
                 bet = player.getCurrentStake();
             }
+        }
+
+        for (Player player : players) {
+            player.setCurrentStake(0);
         }
     }
 
