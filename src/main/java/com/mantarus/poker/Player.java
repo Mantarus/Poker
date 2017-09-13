@@ -5,6 +5,7 @@ import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
 
 public class Player {
 
+    private String name;
     private Strategy strategy;
     private PlayerInfo playerInfo = new PlayerInfo();
 
@@ -15,6 +16,11 @@ public class Player {
     public Player(int balance) {
         this();
         this.playerInfo.balance = balance;
+    }
+
+    public Player(String name, int balance) {
+        this(balance);
+        this.name = name;
     }
 
     public Integer playSmallBlind(int bet) {
@@ -31,6 +37,14 @@ public class Player {
 
     public void trade(int stake, BoardInfo boardInfo) {
         strategy.trade(stake, playerInfo, boardInfo);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Strategy getStrategy() {

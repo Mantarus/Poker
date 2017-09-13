@@ -16,6 +16,7 @@ public class GameRunner {
 
     public void run() {
         while (board.isAlive()) {
+            System.out.println("NEW GAME STARTED");
             board.reset();
             //TODO: Initialize bet properly and fix initial bets for trade rounds
             int bet = 42;
@@ -50,6 +51,7 @@ public class GameRunner {
      * is placed by the player to the left of the small blind.
      */
     private void playBlinds(int blind) {
+        System.out.println("PLAY BLINDS");
         board.setBank(board.getBank() + board.getPlayers().next().playSmallBlind(blind));
         board.setBank(board.getBank() + board.getPlayers().next().playBigBlind(blind));
     }
@@ -81,6 +83,7 @@ public class GameRunner {
      * 2. All players who haven't folded have bet the same amount of money for the round.
      */
     private void preFlop(int bet) {
+        System.out.println("PREFLOP");
         trade(bet);
     }
 
@@ -90,9 +93,11 @@ public class GameRunner {
      * followed by three cards faceup.
      */
     private void flop() {
+        System.out.println("FLOP");
         board.burnCard();
         board.dealToCommunity(3);
         board.recalculateCombinations();
+        Utils.printCards(board.getCommunityCards());
     }
 
     /**
@@ -100,9 +105,11 @@ public class GameRunner {
      * also known as the "burn and turn." Once the turn has been dealt, the third betting round starts.
      */
     private void turn() {
+        System.out.println("TURN");
         board.burnCard();
         board.dealToCommunity(1);
         board.recalculateCombinations();
+        Utils.printCards(board.getCommunityCards());
     }
 
     /**
@@ -113,9 +120,11 @@ public class GameRunner {
      * The betting round is identical to the betting round on the turn.
      */
     private void river() {
+        System.out.println("RIVER");
         board.burnCard();
         board.dealToCommunity(1);
         board.recalculateCombinations();
+        Utils.printCards(board.getCommunityCards());
     }
 
     /**
@@ -129,6 +138,7 @@ public class GameRunner {
      * The size of a bet for this round, and the final betting round, is doubled
      */
     private void trade(int bet) {
+        System.out.println("TRADING ROUND");
         List<Player> players = board.getPlayers().getAsList();
         while (!checkBetEquality(players)) {
             while (board.getPlayers().next().isFolded()) {
@@ -161,7 +171,12 @@ public class GameRunner {
      * Open all player's cards and calculate combinations
      */
     private void showdown() {
-
+        System.out.println("SHOWDOWN");
+        board.getPlayers().forEach(player -> {
+            System.out.println(String.format("%s's cards:", player.getName()));
+            System.out.println(player.getHand());
+            System.out.println(player.getCurrentRanking());
+        });
     }
 
 }

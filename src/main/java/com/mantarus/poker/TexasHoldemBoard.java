@@ -126,6 +126,10 @@ public class TexasHoldemBoard {
         alive = players.size() >= MIN_PLAYERS;
     }
 
+    public List<Card> getCommunityCards() {
+        return communityCards;
+    }
+
     public PlayersQueue getPlayers() {
         return players;
     }
