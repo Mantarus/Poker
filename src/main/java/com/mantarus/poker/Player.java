@@ -1,7 +1,10 @@
 package com.mantarus.poker;
 
 import java.util.List;
+import java.util.Set;
+
 import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
+import com.mantarus.poker.Action.ActionEnum;
 
 public class Player {
 
@@ -11,6 +14,7 @@ public class Player {
 
     public Player() {
         this.playerInfo.hand = new Hand();
+        this.strategy = new SimpleBotStrategy();
     }
 
     public Player(int balance) {
@@ -35,8 +39,8 @@ public class Player {
         return bet * 2;
     }
 
-    public void trade(int stake, BoardInfo boardInfo) {
-        strategy.trade(stake, playerInfo, boardInfo);
+    public Action trade(int stake, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
+        return strategy.trade(stake, playerInfo, boardInfo, possibleActions);
     }
 
     public String getName() {

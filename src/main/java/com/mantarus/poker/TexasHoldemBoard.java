@@ -18,7 +18,8 @@ public class TexasHoldemBoard {
     private PlayersQueue players = new PlayersQueue();
     //TODO: Do smth to make the dealer useful
     private List<Card> communityCards;
-    private Integer bank;
+    private int bank;
+    private BoardInfo boardInfo = new BoardInfo();
     private boolean alive;
 
     public void initiateGame(int playersCount, int initialBalance) {
@@ -113,6 +114,7 @@ public class TexasHoldemBoard {
      * Reset cards after the game
      */
     public void reset() {
+        deck = new CardDeck();
         players.forEach(player -> player.getHand().reset());
         communityCards = new ArrayList<>();
         bank = 0;
@@ -146,11 +148,19 @@ public class TexasHoldemBoard {
         bank = 0;
     }
 
-    BoardInfo getInfo() {
-        return new BoardInfo();
+    BoardInfo getBoardInfo() {
+        return boardInfo;
     }
 
     public class BoardInfo {
+        private Integer currentStake = 0;
 
+        public Integer getCurrentStake() {
+            return currentStake;
+        }
+
+        public void setCurrentStake(Integer currentStake) {
+            this.currentStake = currentStake;
+        }
     }
 }

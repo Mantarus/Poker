@@ -1,6 +1,5 @@
 package com.mantarus.poker;
 
-
 public class Action {
 
     private final ActionEnum action;
@@ -9,6 +8,11 @@ public class Action {
     public Action(ActionEnum action, int amount) {
         this.action = action;
         this.amount = amount;
+    }
+
+    public Action(ActionEnum action) {
+        this.action = action;
+        this.amount = 0;
     }
 
     public ActionEnum getAction() {
@@ -20,9 +24,10 @@ public class Action {
     }
 
     public enum ActionEnum {
+        BET,
         RAISE,
         CALL,
-        BET,
+        CHECK,
         FOLD
     }
 }

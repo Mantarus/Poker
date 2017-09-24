@@ -6,16 +6,19 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
+        GameRunner runner = new GameRunner();
+        runner.startGame(4, 1000);
+
 //        trySequence();
-        tryCombination(Ranking.HIGH_CARD);
-        tryCombination(Ranking.ONE_PAIR);
-        tryCombination(Ranking.TWO_PAIRS);
-        tryCombination(Ranking.THREE_OF_A_KIND);
-        tryCombination(Ranking.STRAIGHT);
-        tryCombination(Ranking.FLUSH);
-        tryCombination(Ranking.FOUR_OF_A_KIND);
-        tryCombination(Ranking.STRAIGHT_FLUSH);
-        tryCombination(Ranking.ROYAL_FLUSH);
+//        tryCombination(Ranking.HIGH_CARD);
+//        tryCombination(Ranking.ONE_PAIR);
+//        tryCombination(Ranking.TWO_PAIRS);
+//        tryCombination(Ranking.THREE_OF_A_KIND);
+//        tryCombination(Ranking.STRAIGHT);
+//        tryCombination(Ranking.FLUSH);
+//        tryCombination(Ranking.FOUR_OF_A_KIND);
+//        tryCombination(Ranking.STRAIGHT_FLUSH);
+//        tryCombination(Ranking.ROYAL_FLUSH);
     }
 
     private static void printCards(String title, List<Card> cards) {

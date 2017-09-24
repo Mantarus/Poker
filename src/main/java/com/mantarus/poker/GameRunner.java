@@ -1,6 +1,10 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.exceptions.UnallowedActionException;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * http://www.pokerlistings.com/poker-rules-texas-holdem - rules
@@ -54,6 +58,7 @@ public class GameRunner {
         System.out.println("PLAY BLINDS");
         board.setBank(board.getBank() + board.getPlayers().next().playSmallBlind(blind));
         board.setBank(board.getBank() + board.getPlayers().next().playBigBlind(blind));
+        board.getBoardInfo().setCurrentStake(blind * 2);
     }
 
     /**
@@ -144,22 +149,50 @@ public class GameRunner {
             while (board.getPlayers().next().isFolded()) {
             }
             Player player = board.getPlayers().current();
-            player.trade(bet, board.getInfo());
+
+            Set<Action.ActionEnum> allowedActions = new HashSet<>();
+            allowedActions.add(Action.ActionEnum.BET);
+            allowedActions.add(Action.ActionEnum.RAISE);
+            allowedActions.add(Action.ActionEnum.CALL);
+            allowedActions.add(Action.ActionEnum.CHECK);
+            allowedActions.add(Action.ActionEnum.FOLD);
+
+            Action action = player.trade(bet, board.getBoardInfo(), allowedActions);
+            if (!checkAction(action, player))
+                throw new UnallowedActionException("Action is not allowed!");
+
+            executeAction(action, player);
+
             if (!player.isFolded()) {
                 bet = player.getCurrentStake();
             }
         }
+    }
 
-        for (Player player : players) {
-            player.setCurrentStake(0);
+    private boolean checkAction(Action action, Player player) {
+        return true;
+    }
+
+    private void executeAction(Action action, Player player) {
+        if (action.getAction().equals(Action.ActionEnum.FOLD)) {
+            player.setFolded(true);
+        } else {
+            player.setCurrentStake(player.getCurrentStake() + action.getAmount());
+            player.setBalance(player.getBalance() - action.getAmount());
+            if (player.getCurrentStake() > board.getBoardInfo().getCurrentStake()) {
+                board.getBoardInfo().setCurrentStake(player.getCurrentStake());
+            }
         }
     }
 
     private boolean checkBetEquality(List<Player> players) {
-        if (players.isEmpty()) {
-            return true;
+        int bet = 0;
+        for (Player player : players) {
+            if (!player.isFolded() && player.getBalance() > 0) {
+                bet = player.getCurrentStake();
+                break;
+            }
         }
-        int bet = players.get(0).getCurrentStake();
         for (Player player : players) {
             if (player.getCurrentStake() != bet)
                 return false;
