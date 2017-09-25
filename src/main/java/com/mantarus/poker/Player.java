@@ -7,12 +7,14 @@ import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
 import com.mantarus.poker.Action.ActionEnum;
 
 public class Player {
+    private static int count = 0;
 
     private String name;
     private Strategy strategy;
     private PlayerInfo playerInfo = new PlayerInfo();
 
     public Player() {
+        this.name = String.format("Player %d", ++count);
         this.playerInfo.hand = new Hand();
         this.strategy = new SimpleBotStrategy();
     }
@@ -28,6 +30,7 @@ public class Player {
     }
 
     public Integer playSmallBlind(int bet) {
+        System.out.println(String.format("%s plays BLIND (%d)", name, bet));
         setCurrentStake(bet);
         playerInfo.balance -= bet;
         return bet;

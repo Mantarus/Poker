@@ -5,6 +5,7 @@ import com.mantarus.poker.exceptions.UnallowedActionException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * http://www.pokerlistings.com/poker-rules-texas-holdem - rules
@@ -26,23 +27,55 @@ public class GameRunner {
             int bet = 42;
             playBlinds(bet);
             board.dealToPlayers();
-            preFlop(bet);
-            flop();
-            trade(bet);
-            turn();
-            trade(bet * 2);
-            river();
-            trade(bet * 2);
-            showdown();
-            List<Player> winners = board.getWinners();
-            int increment = board.getBank() / winners.size();
-            for (Player winner : winners) {
-                board.incrementBalance(winner, increment);
+            if (preFlop(bet)) {
+                closeGame();
+                continue;
             }
-            board.clearBank();
-            board.kickLosers();
-            board.getPlayers().rotateDealer();
+            flop();
+            if (trade(bet)) {
+                closeGame();
+                continue;
+            }
+            turn();
+            if (trade(bet * 2)) {
+                closeGame();
+                continue;
+            }
+            river();
+            if (trade(bet * 2)) {
+                closeGame();
+                continue;
+            }
+            showdown();
+            closeGame();
         }
+    }
+
+    private void closeGame() {
+        board.recalculateCombinations();
+
+        board.getPlayers().forEach(player -> {
+            if (!player.isFolded()) {
+                System.out.println(String.format("%s's cards:", player.getName()));
+                System.out.println(player.getHand());
+                System.out.println(player.getCurrentRanking());
+            }
+        });
+
+        List<Player> winners = board.getWinners();
+        int increment = board.getBank() / winners.size();
+        for (Player winner : winners) {
+            board.incrementBalance(winner, increment);
+            System.out.println(String.format("Player %s won %d", winner.getName(), increment));
+        }
+        board.clearBank();
+        board.getBoardInfo().setCurrentStake(0);
+        board.kickLosers();
+        board.getPlayers().rotateDealer();
+        board.getPlayers().forEach(player ->  {
+            player.setFolded(false);
+            player.setCurrentStake(0);
+        });
     }
 
     /**
@@ -87,9 +120,9 @@ public class GameRunner {
      * 1. All players have had a chance to act.
      * 2. All players who haven't folded have bet the same amount of money for the round.
      */
-    private void preFlop(int bet) {
+    private boolean preFlop(int bet) {
         System.out.println("PREFLOP");
-        trade(bet);
+        return trade(bet);
     }
 
     /**
@@ -101,7 +134,6 @@ public class GameRunner {
         System.out.println("FLOP");
         board.burnCard();
         board.dealToCommunity(3);
-        board.recalculateCombinations();
         Utils.printCards(board.getCommunityCards());
     }
 
@@ -113,7 +145,6 @@ public class GameRunner {
         System.out.println("TURN");
         board.burnCard();
         board.dealToCommunity(1);
-        board.recalculateCombinations();
         Utils.printCards(board.getCommunityCards());
     }
 
@@ -128,7 +159,6 @@ public class GameRunner {
         System.out.println("RIVER");
         board.burnCard();
         board.dealToCommunity(1);
-        board.recalculateCombinations();
         Utils.printCards(board.getCommunityCards());
     }
 
@@ -141,11 +171,13 @@ public class GameRunner {
      *
      * The third betting round is identical to the flop betting round with one single exception:
      * The size of a bet for this round, and the final betting round, is doubled
+     *
+     * @return 'true' if someone wins, 'false' otherwise
      */
-    private void trade(int bet) {
+    private boolean trade(int bet) {
         System.out.println("TRADING ROUND");
         List<Player> players = board.getPlayers().getAsList();
-        while (!checkBetEquality(players)) {
+        do {
             while (board.getPlayers().next().isFolded()) {
             }
             Player player = board.getPlayers().current();
@@ -162,11 +194,15 @@ public class GameRunner {
                 throw new UnallowedActionException("Action is not allowed!");
 
             executeAction(action, player);
+            if (action.getAction() == Action.ActionEnum.FOLD && checkOneNotFolded(players)) {
+                return true;
+            }
 
             if (!player.isFolded()) {
                 bet = player.getCurrentStake();
             }
-        }
+        } while (!checkBetEquality(players));
+        return false;
     }
 
     private boolean checkAction(Action action, Player player) {
@@ -174,11 +210,13 @@ public class GameRunner {
     }
 
     private void executeAction(Action action, Player player) {
+        System.out.println(String.format("%s does %s (%d)", player.getName(), action.getAction(), action.getAmount()));
         if (action.getAction().equals(Action.ActionEnum.FOLD)) {
             player.setFolded(true);
         } else {
             player.setCurrentStake(player.getCurrentStake() + action.getAmount());
             player.setBalance(player.getBalance() - action.getAmount());
+            board.setBank(board.getBank() + action.getAmount());
             if (player.getCurrentStake() > board.getBoardInfo().getCurrentStake()) {
                 board.getBoardInfo().setCurrentStake(player.getCurrentStake());
             }
@@ -200,16 +238,16 @@ public class GameRunner {
         return true;
     }
 
+    private boolean checkOneNotFolded(List<Player> players) {
+        int folded = players.stream().filter(Player::isFolded).collect(Collectors.toList()).size();
+        return folded == 1;
+    }
+
     /**
      * Open all player's cards and calculate combinations
      */
     private void showdown() {
         System.out.println("SHOWDOWN");
-        board.getPlayers().forEach(player -> {
-            System.out.println(String.format("%s's cards:", player.getName()));
-            System.out.println(player.getHand());
-            System.out.println(player.getCurrentRanking());
-        });
     }
 
 }

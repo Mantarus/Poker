@@ -9,6 +9,11 @@ public class SimpleBotStrategy implements Strategy {
 
     @Override
     public Action trade(int stake, PlayerInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            System.out.println("¯\\_(ツ)_/¯");
+//        }
         int randResult = Utils.getRandomInt();
 
         if (randResult < 5 && possibleActions.contains(ActionEnum.FOLD))

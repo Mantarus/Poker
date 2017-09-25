@@ -45,7 +45,7 @@ public class TexasHoldemBoard {
     }
 
     public void kickLosers() {
-        for (Player player : players) {
+        for (Player player : players.getAsList()) {
             if (player.getBalance() <= 0) {
                 leave(player);
             }
@@ -56,6 +56,9 @@ public class TexasHoldemBoard {
         List<Player> winners = new ArrayList<>();
 
         for (Player player : players) {
+            if (player.isFolded()) {
+                continue;
+            }
             if (winners.isEmpty()) {
                 winners.add(player);
                 continue;
@@ -142,6 +145,7 @@ public class TexasHoldemBoard {
 
     public void setBank(Integer bank) {
         this.bank = bank;
+        System.out.println(String.format("Bank is %d now", bank));
     }
 
     public void clearBank() {

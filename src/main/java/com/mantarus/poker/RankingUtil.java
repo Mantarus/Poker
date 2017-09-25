@@ -152,8 +152,10 @@ public abstract class RankingUtil {
         remainingCards = getOrderedList(remainingCards, Card.aceHighComparator, true);
 
         List<Card> kickers = new ArrayList<>();
-        for (int i = 0; i < 5 - player.getCombination().size(); i++) {
-            kickers.add(remainingCards.get(i));
+        for (Card card : remainingCards) {
+            if (kickers.size() + player.getCombination().size() == 5)
+                break;
+            kickers.add(card);
         }
 
         player.setKickers(kickers);
