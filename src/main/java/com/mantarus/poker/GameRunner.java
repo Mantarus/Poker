@@ -49,6 +49,9 @@ public class GameRunner {
             showdown();
             closeGame();
         }
+        for (Player player : board.getPlayers()) {
+            System.out.println(String.format("WINNER: %s", player.getName()));
+        }
     }
 
     private void closeGame() {
@@ -66,7 +69,7 @@ public class GameRunner {
         int increment = board.getBank() / winners.size();
         for (Player winner : winners) {
             board.incrementBalance(winner, increment);
-            System.out.println(String.format("Player %s won %d", winner.getName(), increment));
+            System.out.println(String.format("%s won %d", winner.getName(), increment));
         }
         board.clearBank();
         board.getBoardInfo().setCurrentStake(0);
@@ -176,28 +179,48 @@ public class GameRunner {
      */
     private boolean trade(int bet) {
         System.out.println("TRADING ROUND");
+
+        boolean betDone = false;
+        int raiseCount = 0;
+
         List<Player> players = board.getPlayers().getAsList();
         do {
-            while (board.getPlayers().next().isFolded()) {
+            if (checkZeroBalance(players) || checkOneNotFolded(players)) {
+                return true;
             }
-            Player player = board.getPlayers().current();
+            Player player = board.getPlayers().next();
+            if (player.isFolded() || player.getBalance() == 0) {
+                System.out.println(String.format("%s skips because of %s", player.getName(), player.isFolded() ? "FOLD" : "zero balance"));
+                continue;
+            }
 
             Set<Action.ActionEnum> allowedActions = new HashSet<>();
-            allowedActions.add(Action.ActionEnum.BET);
-            allowedActions.add(Action.ActionEnum.RAISE);
-            allowedActions.add(Action.ActionEnum.CALL);
-            allowedActions.add(Action.ActionEnum.CHECK);
             allowedActions.add(Action.ActionEnum.FOLD);
 
+            if (player.getCurrentStake() == board.getBoardInfo().getCurrentStake()) {
+                allowedActions.add(Action.ActionEnum.CHECK);
+            } else {
+                allowedActions.add(Action.ActionEnum.CALL);
+            }
+
+            if (!betDone) {
+                allowedActions.add(Action.ActionEnum.BET);
+            } else if (raiseCount < 3) {
+                allowedActions.add(Action.ActionEnum.RAISE);
+            }
+
+
             Action action = player.trade(bet, board.getBoardInfo(), allowedActions);
-            if (!checkAction(action, player))
+            if (!allowedActions.contains(action.getAction()) || !checkAction(action, player))
                 throw new UnallowedActionException("Action is not allowed!");
 
             executeAction(action, player);
-            if (action.getAction() == Action.ActionEnum.FOLD && checkOneNotFolded(players)) {
-                return true;
+            if (action.getAction() == Action.ActionEnum.BET) {
+                betDone = true;
             }
-
+            if (action.getAction() == Action.ActionEnum.RAISE) {
+                raiseCount++;
+            }
             if (!player.isFolded()) {
                 bet = player.getCurrentStake();
             }
@@ -206,6 +229,12 @@ public class GameRunner {
     }
 
     private boolean checkAction(Action action, Player player) {
+        if (player.getBalance() - action.getAmount() < 0)
+            throw new UnallowedActionException("Action can't lead to negative balance!");
+        if (action.getAmount() < 0)
+            throw new UnallowedActionException("Amount can't be negative!");
+        if (action.getAmount() == 0 && (action.getAction() == Action.ActionEnum.CALL || action.getAction() == Action.ActionEnum.BET || action.getAction() == Action.ActionEnum.RAISE))
+            throw new UnallowedActionException(String.format("Amount of %s can't be zero!", action.getAction()));
         return true;
     }
 
@@ -236,6 +265,10 @@ public class GameRunner {
                 return false;
         }
         return true;
+    }
+
+    private boolean checkZeroBalance(List<Player> players) {
+        return players.stream().filter(player -> !player.isFolded() && player.getBalance() > 0).collect(Collectors.toList()).size() == 0;
     }
 
     private boolean checkOneNotFolded(List<Player> players) {

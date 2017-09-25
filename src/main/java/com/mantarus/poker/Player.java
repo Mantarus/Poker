@@ -30,16 +30,19 @@ public class Player {
     }
 
     public Integer playSmallBlind(int bet) {
-        System.out.println(String.format("%s plays BLIND (%d)", name, bet));
+        bet = bet <= getBalance() ? bet : getBalance();
+        System.out.println(String.format("%s plays SMALL BLIND (%d)", name, bet));
         setCurrentStake(bet);
-        playerInfo.balance -= bet;
+        setBalance(playerInfo.balance - bet);
         return bet;
     }
 
     public Integer playBigBlind(int bet) {
-        setCurrentStake(bet * 2);
-        playerInfo.balance -= bet * 2;
-        return bet * 2;
+        bet = bet * 2 <= getBalance() ? bet * 2 : getBalance();
+        System.out.println(String.format("%s plays BIG BLIND (%d)", name, bet));
+        setCurrentStake(bet);
+        setBalance(playerInfo.balance - bet);
+        return bet;
     }
 
     public Action trade(int stake, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
@@ -84,6 +87,7 @@ public class Player {
 
     public void setBalance(Integer balance) {
         this.playerInfo.balance = balance;
+        System.out.println(String.format("%s balance is %d", name, playerInfo.balance));
     }
 
     public int getCurrentStake() {
@@ -92,6 +96,7 @@ public class Player {
 
     public void setCurrentStake(Integer currentStake) {
         this.playerInfo.currentStake = currentStake;
+        System.out.println(String.format("%s stake is %d", name, playerInfo.currentStake));
     }
 
     public Ranking getCurrentRanking() {

@@ -48,6 +48,7 @@ public class TexasHoldemBoard {
         for (Player player : players.getAsList()) {
             if (player.getBalance() <= 0) {
                 leave(player);
+                System.out.println(String.format("%s left the game", player.getName()));
             }
         }
     }
