@@ -45,8 +45,8 @@ public class Player {
         return bet;
     }
 
-    public Action trade(int stake, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
-        return strategy.trade(stake, playerInfo, boardInfo, possibleActions);
+    public Action trade(BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
+        return strategy.trade(playerInfo, boardInfo, possibleActions);
     }
 
     public String getName() {

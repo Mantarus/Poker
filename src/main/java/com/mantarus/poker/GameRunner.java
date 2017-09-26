@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.min;
+
 /**
  * http://www.pokerlistings.com/poker-rules-texas-holdem - rules
  */
@@ -188,66 +190,150 @@ public class GameRunner {
             if (checkZeroBalance(players) || checkOneNotFolded(players)) {
                 return true;
             }
+
             Player player = board.getPlayers().next();
             if (player.isFolded() || player.getBalance() == 0) {
                 System.out.println(String.format("%s skips because of %s", player.getName(), player.isFolded() ? "FOLD" : "zero balance"));
                 continue;
             }
 
-            Set<Action.ActionEnum> allowedActions = new HashSet<>();
-            allowedActions.add(Action.ActionEnum.FOLD);
+            Set<Action.ActionEnum> allowedActions = getPossibleActions(player, betDone, raiseCount);
 
-            if (player.getCurrentStake() == board.getBoardInfo().getCurrentStake()) {
-                allowedActions.add(Action.ActionEnum.CHECK);
-            } else {
-                allowedActions.add(Action.ActionEnum.CALL);
-            }
-
-            if (!betDone) {
-                allowedActions.add(Action.ActionEnum.BET);
-            } else if (raiseCount < 3) {
-                allowedActions.add(Action.ActionEnum.RAISE);
-            }
-
-
-            Action action = player.trade(bet, board.getBoardInfo(), allowedActions);
-            if (!allowedActions.contains(action.getAction()) || !checkAction(action, player))
-                throw new UnallowedActionException("Action is not allowed!");
-
+            Action action = player.trade(board.getBoardInfo(), allowedActions);
+            checkAction(action, player, allowedActions);
             executeAction(action, player);
+
             if (action.getAction() == Action.ActionEnum.BET) {
                 betDone = true;
             }
             if (action.getAction() == Action.ActionEnum.RAISE) {
                 raiseCount++;
             }
-            if (!player.isFolded()) {
-                bet = player.getCurrentStake();
-            }
         } while (!checkBetEquality(players));
         return false;
     }
 
-    private boolean checkAction(Action action, Player player) {
-        if (player.getBalance() - action.getAmount() < 0)
-            throw new UnallowedActionException("Action can't lead to negative balance!");
-        if (action.getAmount() < 0)
-            throw new UnallowedActionException("Amount can't be negative!");
-        if (action.getAmount() == 0 && (action.getAction() == Action.ActionEnum.CALL || action.getAction() == Action.ActionEnum.BET || action.getAction() == Action.ActionEnum.RAISE))
-            throw new UnallowedActionException(String.format("Amount of %s can't be zero!", action.getAction()));
-        return true;
+    //Done
+    /**
+     * Analyze information about game state and player to provide set of possible actions
+     * @param player acting player
+     * @param betDone true if someone acted BET before, false otherwise
+     * @param raiseCount how many times RAISE was committed
+     * @return set of possible actions
+     */
+    private Set<Action.ActionEnum> getPossibleActions(Player player, boolean betDone, int raiseCount) {
+        Set<Action.ActionEnum> allowedActions = new HashSet<>();
+
+        // Difference between board current stake and player current stake
+        int difference = board.getBoardInfo().getCurrentStake() - player.getCurrentStake();
+
+        // FOLD is allowed by default
+        allowedActions.add(Action.ActionEnum.FOLD);
+
+        // If player current stake equals to board current stake, allow CHECK, else allow CALL
+        if (difference == 0) {
+            allowedActions.add(Action.ActionEnum.CHECK);
+        } else {
+            allowedActions.add(Action.ActionEnum.CALL);
+        }
+
+        // If player has balance bigger than difference, he can BET or RAISE
+        if (player.getBalance() > difference) {
+            // If nobody did BET before, BET is allowed
+            if (!betDone) {
+                allowedActions.add(Action.ActionEnum.BET);
+            // Else if RAISE was committed less than 3 times, RAISE is allowed
+            } else if (raiseCount < 3) {
+                allowedActions.add(Action.ActionEnum.RAISE);
+            }
+        }
+        return allowedActions;
     }
 
+    //Done
+    /**
+     * Check that suggested action is possible, throws exception if it is not
+     * @param action suggested action
+     * @param player acting player
+     * @param allowedActions set of possible actions
+     */
+    private void checkAction(Action action, Player player, Set<Action.ActionEnum> allowedActions) {
+        // Difference between board current stake and player's current stake
+        int difference = board.getBoardInfo().getCurrentStake() - player.getCurrentStake();
+        // Additional bet chosen by player
+        int bet = action.getAmount();
+
+        // Check that action is contained in set of possible actions
+        if (!allowedActions.contains(action.getAction()))
+            throw new UnallowedActionException("Action was not allowed!");
+
+        // Check that bet is not negative
+        if (bet < 0)
+            throw new UnallowedActionException("Amount can't be negative!");
+
+        // Check that bet is positive in case of BET and RAISE
+        if ((action.getAction() == Action.ActionEnum.BET || action.getAction() == Action.ActionEnum.RAISE) && bet <= 0) {
+            throw new UnallowedActionException(String.format("Amount of %s must be positive!", action.getAction()));
+        }
+
+        // Check that bet isn't too large in case of BET and RAISE
+        if (action.getAction() == Action.ActionEnum.BET || action.getAction() == Action.ActionEnum.RAISE) {
+            int total = difference + bet;
+            if (total > player.getBalance())
+                throw new UnallowedActionException("Action can't lead to negative balance!");
+        // Check that bet is 0 otherwise
+        } else if (bet != 0) {
+            throw new UnallowedActionException(String.format("Amount of %s must be zero!", action.getAction()));
+        }
+    }
+
+    //Done
+    /**
+     * Take previously chosen and checked action
+     * @param action chosen action
+     * @param player acting player
+     */
     private void executeAction(Action action, Player player) {
+        // Difference between board current stake and player's current stake
+        int difference = board.getBoardInfo().getCurrentStake() - player.getCurrentStake();
+        // Additional bet chosen by player
+        int bet = action.getAmount();
+
+        // Log information about the action
         System.out.println(String.format("%s does %s (%d)", player.getName(), action.getAction(), action.getAmount()));
-        if (action.getAction().equals(Action.ActionEnum.FOLD)) {
-            player.setFolded(true);
-        } else {
-            player.setCurrentStake(player.getCurrentStake() + action.getAmount());
-            player.setBalance(player.getBalance() - action.getAmount());
-            board.setBank(board.getBank() + action.getAmount());
-            if (player.getCurrentStake() > board.getBoardInfo().getCurrentStake()) {
-                board.getBoardInfo().setCurrentStake(player.getCurrentStake());
+
+        switch (action.getAction()) {
+            // Set player folded if FOLD is committed
+            case FOLD: {
+                player.setFolded(true);
+
+                break;
+            }
+            // Equalize player stake to board stake in case of CALL
+            case CALL: {
+                difference = min(player.getBalance(), difference);
+                //Change player state
+                player.setCurrentStake(player.getCurrentStake() + difference);
+                player.setBalance(player.getBalance() - difference);
+                //Change board state
+                board.setBank(board.getBank() + difference);
+
+                break;
+            }
+            // Equalize player stake to board stake and do additional bet in case of BET or RAISE
+            case BET:
+            case RAISE: {
+                // Change player state
+                player.setCurrentStake(board.getBoardInfo().getCurrentStake() + bet);
+                player.setBalance(player.getBalance() - difference - bet);
+                // Change board state
+                board.getBoardInfo().setCurrentStake(board.getBoardInfo().getCurrentStake() + bet);
+                board.setBank(board.getBank() + difference + bet);
+
+                break;
+            }
+            // Do nothing in case of CHECK
+            case CHECK: {
             }
         }
     }
