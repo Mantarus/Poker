@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 /**
  * http://www.pokerlistings.com/poker-rules-texas-holdem - rules
  */
 public class GameRunner {
+    private static int gamesPlayed = 0;
+
     private TexasHoldemBoard board;
 
     public void startGame(int playersCount, int initialBalance) {
@@ -21,12 +24,12 @@ public class GameRunner {
         run();
     }
 
-    public void run() {
+    private void run() {
         while (board.isAlive()) {
             System.out.println("NEW GAME STARTED");
             board.reset();
             //TODO: Initialize bet properly and fix initial bets for trade rounds
-            int bet = 42;
+            int bet = 1;
             playBlinds(bet);
             board.dealToPlayers();
             if (preFlop(bet)) {
@@ -49,17 +52,33 @@ public class GameRunner {
                 continue;
             }
             showdown();
-            closeGame();
+            if (board.isAlive()) {
+                prepareNextGame();
+            }
         }
-        for (Player player : board.getPlayers()) {
+        for (Player player : board.getPlayers().asList()) {
             System.out.println(String.format("WINNER: %s", player.getName()));
+            System.out.println(String.format("%d games played", gamesPlayed));
         }
+    }
+
+    private void prepareNextGame() {
+        //Reset active players state
+        board.getPlayers().asList().forEach(player -> player.getHand().reset());
+        board.getPlayers().asList().forEach(player ->  {
+            player.setFolded(false);
+            player.setCurrentStake(0);
+        });
+        //Move the dealer button to the next player
+        board.getPlayers().rotateDealer();
+        //Reset turn order
+        board.getPlayers().reset();
     }
 
     private void closeGame() {
         board.recalculateCombinations();
 
-        board.getPlayers().forEach(player -> {
+        board.getPlayers().asList().forEach(player -> {
             if (!player.isFolded()) {
                 System.out.println(String.format("%s's cards:", player.getName()));
                 System.out.println(player.getHand());
@@ -76,11 +95,8 @@ public class GameRunner {
         board.clearBank();
         board.getBoardInfo().setCurrentStake(0);
         board.kickLosers();
-        board.getPlayers().rotateDealer();
-        board.getPlayers().forEach(player ->  {
-            player.setFolded(false);
-            player.setCurrentStake(0);
-        });
+
+        gamesPlayed++;
     }
 
     /**
@@ -94,9 +110,12 @@ public class GameRunner {
      */
     private void playBlinds(int blind) {
         System.out.println("PLAY BLINDS");
-        board.setBank(board.getBank() + board.getPlayers().next().playSmallBlind(blind));
-        board.setBank(board.getBank() + board.getPlayers().next().playBigBlind(blind));
-        board.getBoardInfo().setCurrentStake(blind * 2);
+        int stake = 0;
+        board.setBank(board.getBank() + board.getPlayers().getCurrent().playSmallBlind(blind));
+        stake = max(stake, board.getPlayers().getCurrent().getCurrentStake());
+        board.setBank(board.getBank() + board.getPlayers().getNext().playBigBlind(blind));
+        stake = max(stake, board.getPlayers().getCurrent().getCurrentStake());
+        board.getBoardInfo().setCurrentStake(stake);
     }
 
     /**
@@ -185,13 +204,13 @@ public class GameRunner {
         boolean betDone = false;
         int raiseCount = 0;
 
-        List<Player> players = board.getPlayers().getAsList();
+        List<Player> players = board.getPlayers().asList();
         do {
             if (checkZeroBalance(players) || checkOneNotFolded(players)) {
                 return true;
             }
 
-            Player player = board.getPlayers().next();
+            Player player = board.getPlayers().getNext();
             if (player.isFolded() || player.getBalance() == 0) {
                 System.out.println(String.format("%s skips because of %s", player.getName(), player.isFolded() ? "FOLD" : "zero balance"));
                 continue;
@@ -209,11 +228,12 @@ public class GameRunner {
             if (action.getAction() == Action.ActionEnum.RAISE) {
                 raiseCount++;
             }
-        } while (!checkBetEquality(players));
+        } while (!(board.getPlayers().isNextToDealer(board.getPlayers().getCurrent())
+                && checkBetEquality(players)));
         return false;
     }
 
-    //Done
+    //Done TODO: Write tests
     /**
      * Analyze information about game state and player to provide set of possible actions
      * @param player acting player
@@ -250,7 +270,7 @@ public class GameRunner {
         return allowedActions;
     }
 
-    //Done
+    //Done TODO: Write tests
     /**
      * Check that suggested action is possible, throws exception if it is not
      * @param action suggested action
@@ -287,7 +307,7 @@ public class GameRunner {
         }
     }
 
-    //Done
+    //Done TODO: Write tests
     /**
      * Take previously chosen and checked action
      * @param action chosen action
@@ -338,27 +358,41 @@ public class GameRunner {
         }
     }
 
+    //Done TODO: Write tests
+    /**
+     * Check that every active player with positive balance contributed equal stake to board
+     * @param players list of players
+     * @return true if condition is fulfilled, else false
+     */
     private boolean checkBetEquality(List<Player> players) {
-        int bet = 0;
         for (Player player : players) {
             if (!player.isFolded() && player.getBalance() > 0) {
-                bet = player.getCurrentStake();
-                break;
+                if (player.getCurrentStake() < board.getBoardInfo().getCurrentStake()) {
+                    return false;
+                }
             }
-        }
-        for (Player player : players) {
-            if (player.getCurrentStake() != bet)
-                return false;
         }
         return true;
     }
 
+    //Done TODO: Write tests
+    /**
+     * Check that every active player has zero balance
+     * @param players list of players
+     * @return true if condition is fulfilled, else false
+     */
     private boolean checkZeroBalance(List<Player> players) {
         return players.stream().filter(player -> !player.isFolded() && player.getBalance() > 0).collect(Collectors.toList()).size() == 0;
     }
 
+    //Done TODO: Write tests
+    /**
+     * Check that all player except one discarded their cards
+     * @param players list of players
+     * @return true if condition is fulfilled, else false
+     */
     private boolean checkOneNotFolded(List<Player> players) {
-        int folded = players.stream().filter(Player::isFolded).collect(Collectors.toList()).size();
+        int folded = players.stream().filter(player -> !player.isFolded()).collect(Collectors.toList()).size();
         return folded == 1;
     }
 
@@ -367,6 +401,7 @@ public class GameRunner {
      */
     private void showdown() {
         System.out.println("SHOWDOWN");
+        closeGame();
     }
 
 }

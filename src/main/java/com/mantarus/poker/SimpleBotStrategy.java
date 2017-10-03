@@ -20,8 +20,8 @@ public class SimpleBotStrategy implements Strategy {
         if (randResult < 5 && possibleActions.contains(ActionEnum.FOLD))
             return new Action(ActionEnum.FOLD);
 
-        if (randResult >= 80 && (possibleActions.contains(ActionEnum.BET) || possibleActions.contains(ActionEnum.RAISE))) {
-            int bet = 42;
+        if (randResult >= 70 && (possibleActions.contains(ActionEnum.BET) || possibleActions.contains(ActionEnum.RAISE))) {
+            int bet = 1;
             int difference = boardInfo.getCurrentStake() - playerInfo.getCurrentStake();
             ActionEnum action = ActionEnum.RAISE;
             if (playerInfo.getBalance() < bet + difference)

@@ -123,6 +123,11 @@ public class Player {
         this.playerInfo.kickers = kickers;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public class PlayerInfo {
         private Hand hand;
         private boolean folded;

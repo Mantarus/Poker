@@ -15,7 +15,7 @@ public class TexasHoldemBoard {
     public final static int NUMBER_OF_COMMUNITY_CARDS = 5;
 
     private CardDeck deck = new CardDeck();
-    private PlayersQueue players = new PlayersQueue();
+    private PlayersQueue players;
     //TODO: Do smth to make the dealer useful
     private List<Card> communityCards;
     private int bank;
@@ -23,18 +23,15 @@ public class TexasHoldemBoard {
     private boolean alive;
 
     public void initiateGame(int playersCount, int initialBalance) {
+        List<Player> playerList = new ArrayList<>();
         for (int i = 0; i < playersCount; i++) {
+            if (playerList.size() == MAX_PLAYERS) {
+                throw new PokerException("Too many players");
+            }
             Player player = new Player(initialBalance);
-            sit(player);
+            playerList.add(player);
         }
-    }
-
-    public void sit(Player player) {
-        if (players.size() == MAX_PLAYERS) {
-            throw new PokerException("Too many players");
-        }
-
-        players.add(player);
+        players = new PlayersQueue(playerList);
         updateIsAlive();
     }
 
@@ -45,7 +42,7 @@ public class TexasHoldemBoard {
     }
 
     public void kickLosers() {
-        for (Player player : players.getAsList()) {
+        for (Player player : players.asList()) {
             if (player.getBalance() <= 0) {
                 leave(player);
                 System.out.println(String.format("%s left the game", player.getName()));
@@ -56,7 +53,7 @@ public class TexasHoldemBoard {
     public List<Player> getWinners() {
         List<Player> winners = new ArrayList<>();
 
-        for (Player player : players) {
+        for (Player player : players.asList()) {
             if (player.isFolded()) {
                 continue;
             }
@@ -81,7 +78,7 @@ public class TexasHoldemBoard {
      */
     public void dealToPlayers() {
         IntStream.range(0, NUMBER_OF_PLAYER_CARDS)
-                .forEach(i -> players.forEach(p -> p.getHand().addCard(deck.pop())));
+                .forEach(i -> players.asList().forEach(p -> p.getHand().addCard(deck.pop())));
     }
 
     /**
@@ -105,7 +102,7 @@ public class TexasHoldemBoard {
     }
 
     public void recalculateCombinations() {
-        for (Player player : players) {
+        for (Player player : players.asList()) {
             RankingUtil.checkRanking(player, communityCards);
         }
     }
@@ -119,7 +116,7 @@ public class TexasHoldemBoard {
      */
     public void reset() {
         deck = new CardDeck();
-        players.forEach(player -> player.getHand().reset());
+        players.asList().forEach(player -> player.getHand().reset());
         communityCards = new ArrayList<>();
         bank = 0;
     }

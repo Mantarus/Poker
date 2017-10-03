@@ -7,7 +7,18 @@ public class Main {
 
     public static void main(String[] args) {
         GameRunner runner = new GameRunner();
-        runner.startGame(4, 1000);
+        runner.startGame(4, 20);
+
+//        List<Player> players = new ArrayList<>();
+//        players.add(new Player("Cat", 0));
+//        players.add(new Player("Dog", 0));
+//        players.add(new Player("Pigeon", 0));
+//        players.add(new Player("Zebra", 0));
+//        NewPlayersQueue queue = new NewPlayersQueue(players);
+//        queue.getNext();
+//        queue.getNext();
+//        queue.getNext();
+//        queue.remove(players.get(0));
 
 //        trySequence();
 //        tryCombination(Ranking.HIGH_CARD);
