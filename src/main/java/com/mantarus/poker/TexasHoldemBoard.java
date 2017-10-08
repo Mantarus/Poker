@@ -1,9 +1,16 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.cards.Card;
+import com.mantarus.poker.cards.CardDeck;
 import com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.info.BoardInfo;
+import com.mantarus.poker.info.PlayerPublicInfo;
+import com.mantarus.poker.ranking.RankingUtil;
+import com.mantarus.poker.strategies.ControllableStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TexasHoldemBoard {
@@ -17,10 +24,10 @@ public class TexasHoldemBoard {
     private CardDeck deck = new CardDeck();
     private PlayersQueue players;
     //TODO: Do smth to make the dealer useful
-    private List<Card> communityCards;
-    private int bank;
-    private BoardInfo boardInfo = new BoardInfo();
+    private List<Card> communityCards = new ArrayList<>();
     private boolean alive;
+    private int bank;
+    private int currentStake = 0;
 
     public void initiateGame(int playersCount, int initialBalance) {
         List<Player> playerList = new ArrayList<>();
@@ -122,14 +129,13 @@ public class TexasHoldemBoard {
     public void reset() {
         deck = new CardDeck();
         players.asList().forEach(player -> player.getHand().reset());
-        communityCards = new ArrayList<>();
+        communityCards.clear();
         bank = 0;
     }
 
     public boolean isAlive() {
         return alive;
     }
-
     private void updateIsAlive() {
         alive = players.size() >= MIN_PLAYERS;
     }
@@ -145,31 +151,34 @@ public class TexasHoldemBoard {
     public Integer getBank() {
         return bank;
     }
-
     public void setBank(Integer bank) {
         this.bank = bank;
         System.out.println(String.format("Bank is %d now", bank));
     }
-
     public void clearBank() {
         bank = 0;
     }
 
+    public int getCurrentStake() {
+        return currentStake;
+    }
+    public void setCurrentStake(int currentStake) {
+        this.currentStake = currentStake;
+    }
+
     // TODO: Return copy of BoardInfo
     BoardInfo getBoardInfo() {
-        return boardInfo;
+        List<PlayerPublicInfo> playerInfoList = players.asList()
+                .stream()
+                .map(Player::getPublicInfo)
+                .collect(Collectors.toList());
+
+        return new BoardInfo(
+                bank,
+                currentStake,
+                communityCards,
+                playerInfoList
+        );
     }
 
-    // TODO: Add community cards
-    public class BoardInfo {
-        private Integer currentStake = 0;
-
-        public Integer getCurrentStake() {
-            return currentStake;
-        }
-
-        public void setCurrentStake(Integer currentStake) {
-            this.currentStake = currentStake;
-        }
-    }
 }

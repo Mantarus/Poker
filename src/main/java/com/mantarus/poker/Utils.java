@@ -1,5 +1,7 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.cards.Card;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;

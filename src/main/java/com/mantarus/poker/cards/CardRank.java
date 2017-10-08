@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package com.mantarus.poker.cards;
 
 public enum CardRank {
     TWO(2, "2"),

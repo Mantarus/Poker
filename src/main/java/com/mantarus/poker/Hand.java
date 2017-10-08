@@ -1,9 +1,14 @@
 package com.mantarus.poker;
 
+import com.mantarus.poker.cards.Card;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Contains player cards
+ */
 public class Hand {
 
     private List<Card> cards;
@@ -14,6 +19,10 @@ public class Hand {
 
     public Hand(List<Card> cards) {
         this.cards = cards;
+    }
+
+    public Hand(Hand hand) {
+        this(new ArrayList<>(hand.getCards()));
     }
 
     public List<Card> getCards() {

@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package com.mantarus.poker.cards;
 
 import com.mantarus.poker.exceptions.PokerException;
 
@@ -6,10 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+//TODO: Should be moved to Board (Should be?)
 public class CardDeck {
-
-    //TODO: Should be moved to Board
-
 
     private List<Card> cards;
 
@@ -19,34 +17,25 @@ public class CardDeck {
 
     public CardDeck(boolean shuffle) {
         cards = new LinkedList<>();
+
+        // Filling
         for (CardSuit suit : CardSuit.values()) {
             for (CardRank value : CardRank.values()) {
                 cards.add(new Card(suit, value));
             }
         }
 
+        // Shuffling
         if (shuffle) {
-            shuffle();
+            Collections.shuffle(cards);
         }
     }
 
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
-
     public Card pop() {
-        if (isEmpty()) {
+        if (cards.isEmpty()) {
             throw new PokerException("Can't pop a card from the empty deck");
         }
         return cards.remove(0);
     }
 
-    public CardDeck push(Card card) {
-        cards.add(card);
-        return this;
-    }
-
-    public Boolean isEmpty() {
-        return cards.isEmpty();
-    }
 }

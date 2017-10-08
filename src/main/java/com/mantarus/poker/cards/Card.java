@@ -1,12 +1,12 @@
-package com.mantarus.poker;
+package com.mantarus.poker.cards;
 
 import com.mantarus.poker.exceptions.PokerException;
 
 import java.util.Comparator;
 
 public class Card {
-    private CardSuit suit;
-    private CardRank rank;
+    private final CardSuit suit;
+    private final CardRank rank;
 
     public Card(CardSuit suit, CardRank rank) {
         if (suit == null) {

@@ -1,15 +1,18 @@
-package com.mantarus.poker;
+package com.mantarus.poker.strategies;
 
 import java.util.Set;
-import com.mantarus.poker.Player.PlayerInfo;
-import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
+
+import com.mantarus.poker.Action;
 import com.mantarus.poker.Action.ActionEnum;
+import com.mantarus.poker.Utils;
+import com.mantarus.poker.info.PlayerPrivateInfo;
+import com.mantarus.poker.info.BoardInfo;
 
 public class SimpleBotStrategy implements Strategy {
 
     //Done
     @Override
-    public Action trade(PlayerInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
+    public Action trade(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
 //        try {
 //            Thread.sleep(1000);
 //        } catch (InterruptedException e) {
@@ -22,16 +25,16 @@ public class SimpleBotStrategy implements Strategy {
 
         if (randResult >= 70 && (possibleActions.contains(ActionEnum.BET) || possibleActions.contains(ActionEnum.RAISE))) {
             int bet = 1;
-            int difference = boardInfo.getCurrentStake() - playerInfo.getCurrentStake();
+            int difference = boardInfo.currentStake - playerInfo.currentStake;
             ActionEnum action = ActionEnum.RAISE;
-            if (playerInfo.getBalance() < bet + difference)
-                bet = playerInfo.getBalance() - difference;
+            if (playerInfo.balance < bet + difference)
+                bet = playerInfo.balance - difference;
             if (possibleActions.contains(ActionEnum.BET))
                 action = ActionEnum.BET;
             return new Action(action, bet);
         }
 
-        if (possibleActions.contains(ActionEnum.CHECK) && boardInfo.getCurrentStake().equals(playerInfo.getCurrentStake())) {
+        if (possibleActions.contains(ActionEnum.CHECK) && boardInfo.currentStake == playerInfo.currentStake) {
             return new Action(ActionEnum.CHECK);
         }
 

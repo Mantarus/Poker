@@ -1,5 +1,8 @@
-package com.mantarus.poker;
+package com.mantarus.poker.ranking;
 
+import com.mantarus.poker.Player;
+import com.mantarus.poker.cards.Card;
+import com.mantarus.poker.cards.CardRank;
 import com.mantarus.poker.exceptions.PokerException;
 
 import java.util.ArrayList;

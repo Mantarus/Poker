@@ -1,8 +1,9 @@
-package com.mantarus.poker;
+package com.mantarus.poker.strategies;
 
-import com.mantarus.poker.Player.PlayerInfo;
-import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
+import com.mantarus.poker.Action;
 import com.mantarus.poker.Action.ActionEnum;
+import com.mantarus.poker.info.PlayerPrivateInfo;
+import com.mantarus.poker.info.BoardInfo;
 
 import java.util.Set;
 
@@ -19,6 +20,6 @@ public interface Strategy {
      * CALL, 0 - player equalizes bet <br>
      * BET/RAISE, amount - player raises the bet
      */
-    Action trade(PlayerInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions);
+    Action trade(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions);
 
 }

@@ -1,27 +1,40 @@
 package com.mantarus.poker;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.mantarus.poker.TexasHoldemBoard.BoardInfo;
+import com.mantarus.poker.info.BoardInfo;
 import com.mantarus.poker.Action.ActionEnum;
+import com.mantarus.poker.cards.Card;
+import com.mantarus.poker.info.PlayerPrivateInfo;
+import com.mantarus.poker.info.PlayerPublicInfo;
+import com.mantarus.poker.ranking.Ranking;
+import com.mantarus.poker.strategies.SimpleBotStrategy;
+import com.mantarus.poker.strategies.Strategy;
 
 public class Player {
     private static int count = 0;
 
     private String name;
     private Strategy strategy;
-    private PlayerInfo playerInfo = new PlayerInfo();
+    private Hand hand;
+    private boolean folded;
+    private int balance;
+    private int currentStake;
+    private Ranking currentRanking;
+    private List<Card> combination = new ArrayList<>();
+    private List<Card> kickers = new ArrayList<>();
 
     public Player() {
         this.name = String.format("Player %d", ++count);
-        this.playerInfo.hand = new Hand();
+        this.hand = new Hand();
         this.strategy = new SimpleBotStrategy();
     }
 
     public Player(int balance) {
         this();
-        this.playerInfo.balance = balance;
+        this.balance = balance;
     }
 
     public Player(String name, int balance) {
@@ -33,7 +46,7 @@ public class Player {
         bet = bet <= getBalance() ? bet : getBalance();
         System.out.println(String.format("%s plays SMALL BLIND (%d)", name, bet));
         setCurrentStake(bet);
-        setBalance(playerInfo.balance - bet);
+        setBalance(balance - bet);
         return bet;
     }
 
@@ -41,18 +54,39 @@ public class Player {
         bet = bet * 2 <= getBalance() ? bet * 2 : getBalance();
         System.out.println(String.format("%s plays BIG BLIND (%d)", name, bet));
         setCurrentStake(bet);
-        setBalance(playerInfo.balance - bet);
+        setBalance(balance - bet);
         return bet;
     }
 
     public Action trade(BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
-        return strategy.trade(playerInfo, boardInfo, possibleActions);
+        return strategy.trade(getPrivateInfo(), boardInfo, possibleActions);
+    }
+
+    public PlayerPublicInfo getPublicInfo() {
+        return new PlayerPublicInfo(
+                name,
+                balance,
+                currentStake,
+                folded
+        );
+    }
+
+    private PlayerPrivateInfo getPrivateInfo() {
+        return new PlayerPrivateInfo(
+                name,
+                folded,
+                balance,
+                currentStake,
+                currentRanking,
+                hand.getCards(),
+                combination,
+                kickers
+        );
     }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -60,67 +94,59 @@ public class Player {
     public Strategy getStrategy() {
         return strategy;
     }
-
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
 
     public Hand getHand() {
-        return playerInfo.hand;
+        return hand;
     }
-
     public void setHand(Hand hand) {
-        this.playerInfo.hand = hand;
+        this.hand = hand;
     }
 
     public boolean isFolded() {
-        return playerInfo.folded;
+        return folded;
     }
-
     public void setFolded(boolean folded) {
-        this.playerInfo.folded = folded;
+        this.folded = folded;
     }
 
     public int getBalance() {
-        return playerInfo.balance;
+        return balance;
     }
-
     public void setBalance(Integer balance) {
-        this.playerInfo.balance = balance;
-        System.out.println(String.format("%s balance is %d", name, playerInfo.balance));
+        this.balance = balance;
+        System.out.println(String.format("%s balance is %d", name, balance));
     }
 
     public int getCurrentStake() {
-        return playerInfo.currentStake;
+        return currentStake;
     }
-
     public void setCurrentStake(Integer currentStake) {
-        this.playerInfo.currentStake = currentStake;
-        System.out.println(String.format("%s stake is %d", name, playerInfo.currentStake));
+        this.currentStake = currentStake;
+        System.out.println(String.format("%s stake is %d", name, currentStake));
     }
 
     public Ranking getCurrentRanking() {
-        return playerInfo.currentRanking;
+        return currentRanking;
     }
-
     public void setCurrentRanking(Ranking currentRanking) {
-        this.playerInfo.currentRanking = currentRanking;
+        this.currentRanking = currentRanking;
     }
 
     public List<Card> getCombination() {
-        return playerInfo.combination;
+        return combination;
     }
-
     public void setCombination(List<Card> combination) {
-        this.playerInfo.combination = combination;
+        this.combination = combination;
     }
 
     public List<Card> getKickers() {
-        return playerInfo.kickers;
+        return kickers;
     }
-
     public void setKickers(List<Card> kickers) {
-        this.playerInfo.kickers = kickers;
+        this.kickers = kickers;
     }
 
     @Override
@@ -128,42 +154,4 @@ public class Player {
         return name;
     }
 
-    // TODO: Write 'clone' method
-    public class PlayerInfo {
-        private Hand hand;
-        private boolean folded;
-        private int balance;
-        private int currentStake;
-        private Ranking currentRanking;
-        private List<Card> combination;
-        private List<Card> kickers;
-
-        public Hand getHand() {
-            return hand;
-        }
-
-        public boolean isFolded() {
-            return folded;
-        }
-
-        public int getBalance() {
-            return balance;
-        }
-
-        public int getCurrentStake() {
-            return currentStake;
-        }
-
-        public Ranking getCurrentRanking() {
-            return currentRanking;
-        }
-
-        public List<Card> getCombination() {
-            return combination;
-        }
-
-        public List<Card> getKickers() {
-            return kickers;
-        }
-    }
 }
