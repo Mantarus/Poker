@@ -128,6 +128,7 @@ public class Player {
         return name;
     }
 
+    // TODO: Write 'clone' method
     public class PlayerInfo {
         private Hand hand;
         private boolean folded;

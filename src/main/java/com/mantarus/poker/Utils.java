@@ -1,10 +1,14 @@
 package com.mantarus.poker;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 public abstract class Utils {
+    public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
     private static Random random = new Random();
 
     public static int getRandomInt() {

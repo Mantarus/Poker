@@ -24,7 +24,12 @@ public class TexasHoldemBoard {
 
     public void initiateGame(int playersCount, int initialBalance) {
         List<Player> playerList = new ArrayList<>();
-        for (int i = 0; i < playersCount; i++) {
+
+        Player controllablePlayer = new Player(initialBalance);
+        controllablePlayer.setStrategy(new ControllableStrategy());
+        playerList.add(controllablePlayer);
+
+        for (int i = 1; i < playersCount; i++) {
             if (playerList.size() == MAX_PLAYERS) {
                 throw new PokerException("Too many players");
             }
@@ -150,10 +155,12 @@ public class TexasHoldemBoard {
         bank = 0;
     }
 
+    // TODO: Return copy of BoardInfo
     BoardInfo getBoardInfo() {
         return boardInfo;
     }
 
+    // TODO: Add community cards
     public class BoardInfo {
         private Integer currentStake = 0;
 
