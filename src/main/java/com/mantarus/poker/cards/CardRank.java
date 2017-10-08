@@ -15,10 +15,10 @@ public enum CardRank {
     KING(13, "K"),
     ACE(14, "A");
 
-    private Integer value;
+    private int value;
     private String representation;
 
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -26,7 +26,7 @@ public enum CardRank {
         return representation;
     }
 
-    CardRank(Integer value, String representation) {
+    CardRank(int value, String representation) {
         this.value = value;
         this.representation = representation;
     }

@@ -74,7 +74,7 @@ public class TexasHoldemBoard {
                 continue;
             }
             Player other = winners.get(0);
-            Integer comparingResult = RankingUtil.combinationComparator.compare(player, other);
+            int comparingResult = RankingUtil.combinationComparator.compare(player, other);
             if (comparingResult > 0) {
                 winners.clear();
             } if (comparingResult >= 0) {
@@ -148,10 +148,10 @@ public class TexasHoldemBoard {
         return players;
     }
 
-    public Integer getBank() {
+    public int getBank() {
         return bank;
     }
-    public void setBank(Integer bank) {
+    public void setBank(int bank) {
         this.bank = bank;
         System.out.println(String.format("Bank is %d now", bank));
     }

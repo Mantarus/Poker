@@ -13,15 +13,15 @@ public enum Ranking {
     STRAIGHT_FLUSH(9, "STRAIGHT FLUSH"),
     ROYAL_FLUSH(10, "ROYAL FLUSH");
 
-    private Integer rank;
+    private int rank;
     private String representation;
 
-    Ranking(Integer rank, String representation) {
+    Ranking(int rank, String representation) {
         this.rank = rank;
         this.representation = representation;
     }
 
-    public Integer getRank() {
+    public int getRank() {
         return rank;
     }
 

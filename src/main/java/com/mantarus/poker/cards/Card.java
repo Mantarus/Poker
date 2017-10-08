@@ -28,7 +28,7 @@ public class Card {
         return rank;
     }
 
-    public Integer getRankToInt() {
+    public int getRankToInt() {
         return rank.getValue();
     }
 
@@ -37,7 +37,7 @@ public class Card {
     }
 
     public boolean isEqualTo(Card card) {
-        return this.getRankToInt().equals(card.getRankToInt());
+        return this.getRankToInt() == card.getRankToInt();
     }
 
     public boolean isNextTo(Card card) {
@@ -62,7 +62,7 @@ public class Card {
         if (card2.getRank() == CardRank.ACE) {
             return 1;
         }
-        return card1.getRankToInt().compareTo(card2.getRankToInt());
+        return card1.getRankToInt() - card2.getRankToInt();
     };
 
     public static final Comparator<Card> aceHighComparator = Comparator.comparing(Card::getRankToInt);

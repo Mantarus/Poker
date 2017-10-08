@@ -42,7 +42,7 @@ public class Player {
         this.name = name;
     }
 
-    public Integer playSmallBlind(int bet) {
+    public int playSmallBlind(int bet) {
         bet = bet <= getBalance() ? bet : getBalance();
         System.out.println(String.format("%s plays SMALL BLIND (%d)", name, bet));
         setCurrentStake(bet);
@@ -50,7 +50,7 @@ public class Player {
         return bet;
     }
 
-    public Integer playBigBlind(int bet) {
+    public int playBigBlind(int bet) {
         bet = bet * 2 <= getBalance() ? bet * 2 : getBalance();
         System.out.println(String.format("%s plays BIG BLIND (%d)", name, bet));
         setCurrentStake(bet);
@@ -115,7 +115,7 @@ public class Player {
     public int getBalance() {
         return balance;
     }
-    public void setBalance(Integer balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
         System.out.println(String.format("%s balance is %d", name, balance));
     }
@@ -123,7 +123,7 @@ public class Player {
     public int getCurrentStake() {
         return currentStake;
     }
-    public void setCurrentStake(Integer currentStake) {
+    public void setCurrentStake(int currentStake) {
         this.currentStake = currentStake;
         System.out.println(String.format("%s stake is %d", name, currentStake));
     }

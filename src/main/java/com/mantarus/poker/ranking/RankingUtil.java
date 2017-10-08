@@ -15,12 +15,12 @@ public abstract class RankingUtil {
 
     public static final Comparator<Player> combinationComparator = (player1, player2) -> {
         if (player1.getCurrentRanking() != player2.getCurrentRanking()) {
-            return player1.getCurrentRanking().getRank().compareTo(player2.getCurrentRanking().getRank());
+            return player1.getCurrentRanking().getRank() - player2.getCurrentRanking().getRank();
         }
         return compareKickers(player1, player2);
     };
 
-    private static Integer compareKickers(Player player1, Player player2) {
+    private static int compareKickers(Player player1, Player player2) {
         List<Card> kickers1 = player1.getKickers();
         List<Card> kickers2 = player2.getKickers();
         if (kickers1.size() != kickers2.size()) {
@@ -28,7 +28,7 @@ public abstract class RankingUtil {
         }
         for (int i = 0; i < kickers1.size(); i++) {
             if (kickers1.get(i).getRankToInt() != kickers2.get(i).getRankToInt()) {
-                return kickers1.get(i).getRankToInt().compareTo(kickers2.get(i).getRankToInt());
+                return kickers1.get(i).getRankToInt() - kickers2.get(i).getRankToInt();
             }
         }
         return 0;
@@ -171,7 +171,7 @@ public abstract class RankingUtil {
         }
     }
 
-    private static List<Card> findHighestSameRanked(List<Card> cards, Integer size) {
+    private static List<Card> findHighestSameRanked(List<Card> cards, int size) {
         List<Card> result = new ArrayList<>();
 
         for (Card first : cards) {
@@ -193,7 +193,7 @@ public abstract class RankingUtil {
         return result;
     }
 
-    private static List<Card> findHighestSameSuited(List<Card> cards, Integer size) {
+    private static List<Card> findHighestSameSuited(List<Card> cards, int size) {
         List<Card> result = new ArrayList<>();
         List<Card> cardsOrdered = getOrderedList(cards, Card.aceHighComparator, true);
 
@@ -211,7 +211,7 @@ public abstract class RankingUtil {
         return new ArrayList<>();
     }
 
-    private static List<Card> findHighestSequence(List<Card> cards, Integer size, Boolean compareSuits, Comparator<Card> comparator) {
+    private static List<Card> findHighestSequence(List<Card> cards, int size, boolean compareSuits, Comparator<Card> comparator) {
         List<Card> result = new ArrayList<>();
         List<Card> cardsOrdered = getOrderedList(cards, comparator, true);
 
@@ -236,7 +236,7 @@ public abstract class RankingUtil {
         return new ArrayList<>();
     }
 
-    private static List<Card> getOrderedList(List<Card> cards, Comparator<Card> comparator, Boolean reversed) {
+    private static List<Card> getOrderedList(List<Card> cards, Comparator<Card> comparator, boolean reversed) {
         return cards.stream()
                 .sorted(reversed ? comparator.reversed() : comparator)
                 .collect(Collectors.toList());
