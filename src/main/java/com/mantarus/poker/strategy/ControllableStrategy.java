@@ -1,6 +1,5 @@
-package com.mantarus.poker.strategies;
+package com.mantarus.poker.strategy;
 
-import com.mantarus.poker.Action;
 import com.mantarus.poker.info.BoardInfo;
 import com.mantarus.poker.info.PlayerPrivateInfo;
 

@@ -1,6 +1,5 @@
 package com.mantarus.poker.info;
 
-import com.mantarus.poker.Hand;
 import com.mantarus.poker.cards.Card;
 import com.mantarus.poker.ranking.Ranking;
 

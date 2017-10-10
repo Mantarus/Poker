@@ -1,24 +1,27 @@
-package com.mantarus.poker;
+package com.mantarus.poker.player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.mantarus.poker.strategy.Action;
 import com.mantarus.poker.info.BoardInfo;
-import com.mantarus.poker.Action.ActionEnum;
+import com.mantarus.poker.strategy.Action.ActionEnum;
 import com.mantarus.poker.cards.Card;
 import com.mantarus.poker.info.PlayerPrivateInfo;
 import com.mantarus.poker.info.PlayerPublicInfo;
 import com.mantarus.poker.ranking.Ranking;
-import com.mantarus.poker.strategies.SimpleBotStrategy;
-import com.mantarus.poker.strategies.Strategy;
+import com.mantarus.poker.strategy.SimpleBotStrategy;
+import com.mantarus.poker.strategy.Strategy;
+
+import static java.lang.Math.min;
 
 public class Player {
     private static int count = 0;
 
     private String name;
     private Strategy strategy;
-    private Hand hand;
+    private Hand hand = new Hand();
     private boolean folded;
     private int balance;
     private int currentStake;
@@ -26,24 +29,14 @@ public class Player {
     private List<Card> combination = new ArrayList<>();
     private List<Card> kickers = new ArrayList<>();
 
-    public Player() {
+    public Player(int balance, Strategy strategy) {
         this.name = String.format("Player %d", ++count);
-        this.hand = new Hand();
-        this.strategy = new SimpleBotStrategy();
-    }
-
-    public Player(int balance) {
-        this();
+        this.strategy = strategy;
         this.balance = balance;
     }
 
-    public Player(String name, int balance) {
-        this(balance);
-        this.name = name;
-    }
-
     public int playSmallBlind(int bet) {
-        bet = bet <= getBalance() ? bet : getBalance();
+        bet = min(bet, balance);
         System.out.println(String.format("%s plays SMALL BLIND (%d)", name, bet));
         setCurrentStake(bet);
         setBalance(balance - bet);
@@ -51,7 +44,7 @@ public class Player {
     }
 
     public int playBigBlind(int bet) {
-        bet = bet * 2 <= getBalance() ? bet * 2 : getBalance();
+        bet = min(bet * 2, balance);
         System.out.println(String.format("%s plays BIG BLIND (%d)", name, bet));
         setCurrentStake(bet);
         setBalance(balance - bet);

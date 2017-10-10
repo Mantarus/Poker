@@ -1,6 +1,6 @@
 package com.mantarus.poker.cards;
 
-import com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.exception.PokerException;
 
 import java.util.Comparator;
 
@@ -52,18 +52,22 @@ public class Card {
         return suit.getRepresentation() + rank.getRepresentation();
     }
 
-    public static final Comparator<Card> aceLowComparator = (card1, card2) -> {
-        if (card1.getRank() == card2.getRank()) {
-            return 0;
-        }
-        if (card1.getRank() == CardRank.ACE) {
-            return -1;
-        }
-        if (card2.getRank() == CardRank.ACE) {
-            return 1;
-        }
-        return card1.getRankToInt() - card2.getRankToInt();
-    };
+    public static Comparator<Card> aceLowComparator() {
+        return (card1, card2) -> {
+            if (card1.getRank() == card2.getRank()) {
+                return 0;
+            }
+            if (card1.getRank() == CardRank.ACE) {
+                return -1;
+            }
+            if (card2.getRank() == CardRank.ACE) {
+                return 1;
+            }
+            return card1.getRankToInt() - card2.getRankToInt();
+        };
+    }
 
-    public static final Comparator<Card> aceHighComparator = Comparator.comparing(Card::getRankToInt);
+    public static Comparator<Card> aceHighComparator() {
+        return Comparator.comparing(Card::getRankToInt);
+    }
 }

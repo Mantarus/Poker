@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package com.mantarus.poker.strategy;
 
 public class Action {
 

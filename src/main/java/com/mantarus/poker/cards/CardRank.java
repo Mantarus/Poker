@@ -15,8 +15,8 @@ public enum CardRank {
     KING(13, "K"),
     ACE(14, "A");
 
-    private int value;
-    private String representation;
+    private final int value;
+    private final String representation;
 
     public int getValue() {
         return value;

@@ -1,6 +1,6 @@
 package com.mantarus.poker.cards;
 
-import com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.exception.PokerException;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,10 +12,6 @@ public class CardDeck {
     private List<Card> cards;
 
     public CardDeck() {
-        this(true);
-    }
-
-    public CardDeck(boolean shuffle) {
         cards = new LinkedList<>();
 
         // Filling
@@ -26,9 +22,7 @@ public class CardDeck {
         }
 
         // Shuffling
-        if (shuffle) {
-            Collections.shuffle(cards);
-        }
+        Collections.shuffle(cards);
     }
 
     public Card pop() {

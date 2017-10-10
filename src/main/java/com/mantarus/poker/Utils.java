@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public abstract class Utils {
-    public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     private static Random random = new Random();
 

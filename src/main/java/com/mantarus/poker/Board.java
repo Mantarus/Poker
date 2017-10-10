@@ -2,18 +2,21 @@ package com.mantarus.poker;
 
 import com.mantarus.poker.cards.Card;
 import com.mantarus.poker.cards.CardDeck;
-import com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.exception.PokerException;
 import com.mantarus.poker.info.BoardInfo;
 import com.mantarus.poker.info.PlayerPublicInfo;
+import com.mantarus.poker.player.Player;
+import com.mantarus.poker.player.PlayersQueue;
 import com.mantarus.poker.ranking.RankingUtil;
-import com.mantarus.poker.strategies.ControllableStrategy;
+import com.mantarus.poker.strategy.ControllableStrategy;
+import com.mantarus.poker.strategy.SimpleBotStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TexasHoldemBoard {
+public class Board {
 
     public final static int MIN_PLAYERS = 2;
     public final static int MAX_PLAYERS = 6;
@@ -25,32 +28,25 @@ public class TexasHoldemBoard {
     private PlayersQueue players;
     //TODO: Do smth to make the dealer useful
     private List<Card> communityCards = new ArrayList<>();
-    private boolean alive;
     private int bank;
     private int currentStake = 0;
+    private boolean alive;
 
     public void initiateGame(int playersCount, int initialBalance) {
         List<Player> playerList = new ArrayList<>();
 
-        Player controllablePlayer = new Player(initialBalance);
-        controllablePlayer.setStrategy(new ControllableStrategy());
+        Player controllablePlayer = new Player(initialBalance, new ControllableStrategy());
         playerList.add(controllablePlayer);
 
         for (int i = 1; i < playersCount; i++) {
             if (playerList.size() == MAX_PLAYERS) {
                 throw new PokerException("Too many players");
             }
-            Player player = new Player(initialBalance);
+            Player player = new Player(initialBalance, new SimpleBotStrategy());
             playerList.add(player);
         }
         players = new PlayersQueue(playerList);
         updateIsAlive();
-    }
-
-    public TexasHoldemBoard leave(Player player) {
-        players.remove(player);
-        updateIsAlive();
-        return this;
     }
 
     public void kickLosers() {
@@ -60,6 +56,11 @@ public class TexasHoldemBoard {
                 System.out.println(String.format("%s left the game", player.getName()));
             }
         }
+    }
+
+    public void leave(Player player) {
+        players.remove(player);
+        updateIsAlive();
     }
 
     public List<Player> getWinners() {
@@ -109,16 +110,25 @@ public class TexasHoldemBoard {
                 .forEach(i -> communityCards.add(deck.pop()));
     }
 
+    /**
+     * Discard one card from the deck
+     */
     public void burnCard() {
         deck.pop();
     }
 
+    /**
+     * Recalculate combinations for every player
+     */
     public void recalculateCombinations() {
-        for (Player player : players.asList()) {
-            RankingUtil.checkRanking(player, communityCards);
-        }
+        players.asList().forEach(player -> RankingUtil.checkRanking(player, communityCards));
     }
 
+    /**
+     * Increase balance of chosen player in case of his victory
+     * @param player chosen player
+     * @param increment
+     */
     public void incrementBalance(Player player, int increment) {
         player.setBalance(player.getBalance() + increment);
     }
@@ -133,19 +143,12 @@ public class TexasHoldemBoard {
         bank = 0;
     }
 
-    public boolean isAlive() {
-        return alive;
-    }
-    private void updateIsAlive() {
-        alive = players.size() >= MIN_PLAYERS;
+    public PlayersQueue getPlayers() {
+        return players;
     }
 
     public List<Card> getCommunityCards() {
         return communityCards;
-    }
-
-    public PlayersQueue getPlayers() {
-        return players;
     }
 
     public int getBank() {
@@ -166,7 +169,17 @@ public class TexasHoldemBoard {
         this.currentStake = currentStake;
     }
 
-    // TODO: Return copy of BoardInfo
+    public boolean isAlive() {
+        return alive;
+    }
+    private void updateIsAlive() {
+        alive = players.size() >= MIN_PLAYERS;
+    }
+
+    /**
+     * Get information about the current state of the game
+     * @return object containing copy of board information
+     */
     BoardInfo getBoardInfo() {
         List<PlayerPublicInfo> playerInfoList = players.asList()
                 .stream()

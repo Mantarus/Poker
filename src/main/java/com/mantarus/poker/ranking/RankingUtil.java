@@ -1,9 +1,9 @@
 package com.mantarus.poker.ranking;
 
-import com.mantarus.poker.Player;
+import com.mantarus.poker.player.Player;
 import com.mantarus.poker.cards.Card;
 import com.mantarus.poker.cards.CardRank;
-import com.mantarus.poker.exceptions.PokerException;
+import com.mantarus.poker.exception.PokerException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,9 +95,9 @@ public abstract class RankingUtil {
     }
 
     private static void checkStraight(Player player, List<Card> cards) {
-        List<Card> straight = findHighestSequence(cards, 5, false, Card.aceHighComparator);
+        List<Card> straight = findHighestSequence(cards, 5, false, Card.aceHighComparator());
         if (straight.isEmpty()) {
-            straight = findHighestSequence(cards, 5, false, Card.aceLowComparator);
+            straight = findHighestSequence(cards, 5, false, Card.aceLowComparator());
         }
 
         setCombination(straight, player, Ranking.STRAIGHT);
@@ -131,16 +131,16 @@ public abstract class RankingUtil {
     }
 
     private static void checkStraightFlush(Player player, List<Card> cards) {
-        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator);
+        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator());
         if (straight.isEmpty()) {
-            straight = findHighestSequence(cards, 5, true, Card.aceLowComparator);
+            straight = findHighestSequence(cards, 5, true, Card.aceLowComparator());
         }
 
         setCombination(straight, player, Ranking.STRAIGHT_FLUSH);
     }
 
     private static void checkRoyalFlush(Player player, List<Card> cards) {
-        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator);
+        List<Card> straight = findHighestSequence(cards, 5, true, Card.aceHighComparator());
 
         straight.forEach(card -> {
             if (card.getRank().equals(CardRank.ACE)) {
@@ -152,7 +152,7 @@ public abstract class RankingUtil {
     private static void checkKickers(Player player, List<Card> cards) {
         List<Card> remainingCards = new ArrayList<>(cards);
         remainingCards.removeAll(player.getCombination());
-        remainingCards = getOrderedList(remainingCards, Card.aceHighComparator, true);
+        remainingCards = getOrderedList(remainingCards, Card.aceHighComparator(), true);
 
         List<Card> kickers = new ArrayList<>();
         for (Card card : remainingCards) {
@@ -195,7 +195,7 @@ public abstract class RankingUtil {
 
     private static List<Card> findHighestSameSuited(List<Card> cards, int size) {
         List<Card> result = new ArrayList<>();
-        List<Card> cardsOrdered = getOrderedList(cards, Card.aceHighComparator, true);
+        List<Card> cardsOrdered = getOrderedList(cards, Card.aceHighComparator(), true);
 
         for (Card first : cards) {
             for (Card card : cards) {

@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package com.mantarus.poker.player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ public class PlayersQueue {
 
     public PlayersQueue(List<Player> players) {
         if (players.isEmpty()) {
-            throw new AssertionError("Can't instantiate class with empty collection!");
+            throw new RuntimeException("Can't instantiate class with empty collection!");
         } if (players.size() == 1) {
-            throw new AssertionError("Can't instantiate class with collection containing one element");
+            throw new RuntimeException("Can't instantiate class with collection containing one element");
         }
         this.players = new ArrayList<>(players);
         this.dealer = players.get(0);
@@ -24,7 +24,7 @@ public class PlayersQueue {
      */
     public void rotateDealer() {
         if (players.size() == 0) {
-            throw new AssertionError("Can't rotate dealer in an empty collection!");
+            throw new RuntimeException("Can't rotate dealer in an empty collection!");
         }
         dealer = players.get((players.indexOf(dealer) + 1) % players.size());
         System.out.println(String.format("%s is dealer now", dealer));
@@ -37,7 +37,7 @@ public class PlayersQueue {
      */
     public boolean isNextToDealer(Player player) {
         if (!players.contains(player)) {
-            throw new AssertionError("Player doesn't present in collection!");
+            return false;
         }
         return (players.indexOf(player) == (players.indexOf(dealer) + 1) % players.size());
     }
@@ -48,7 +48,7 @@ public class PlayersQueue {
      */
     public Player getNext() {
         if (players.isEmpty()) {
-            throw new AssertionError("Can't get next player from empty collection!");
+            throw new RuntimeException("Can't get next player from empty collection!");
         }
         current = players.get((players.indexOf(current) + 1) % players.size());
         System.out.println(String.format("Next turn by %s", current));
@@ -61,9 +61,9 @@ public class PlayersQueue {
      */
     public void remove(Player player) {
         if (!players.contains(player)) {
-            throw new AssertionError("Player doesn't present in collection!");
+            throw new RuntimeException("Player doesn't present in collection!");
         } if (players.size() == 1) {
-            throw new AssertionError("Collection mustn't be empty after removing!");
+            throw new RuntimeException("Collection mustn't be empty after removing!");
         }
         if (player == dealer) {
             int idx = players.indexOf(dealer) == 0 ? players.size() - 1 : (players.indexOf(dealer) + 1) % players.size();
@@ -79,7 +79,7 @@ public class PlayersQueue {
     /**
      * Make player, sitting next to the dealer, current
      */
-    public void reset() {
+    public void resetCurrent() {
         current = players.get((players.indexOf(dealer) + 1) % players.size());
     }
 

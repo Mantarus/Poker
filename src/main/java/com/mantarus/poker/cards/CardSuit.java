@@ -6,13 +6,13 @@ public enum CardSuit {
     DIAMONDS("♦"),
     CLUBS("♣");
 
-    private String representation;
-
-    public String getRepresentation() {
-        return representation;
-    }
+    private final String representation;
 
     CardSuit(String representation) {
         this.representation = representation;
+    }
+
+    public String getRepresentation() {
+        return representation;
     }
 }

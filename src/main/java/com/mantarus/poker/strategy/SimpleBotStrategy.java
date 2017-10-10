@@ -1,9 +1,8 @@
-package com.mantarus.poker.strategies;
+package com.mantarus.poker.strategy;
 
 import java.util.Set;
 
-import com.mantarus.poker.Action;
-import com.mantarus.poker.Action.ActionEnum;
+import com.mantarus.poker.strategy.Action.ActionEnum;
 import com.mantarus.poker.Utils;
 import com.mantarus.poker.info.PlayerPrivateInfo;
 import com.mantarus.poker.info.BoardInfo;

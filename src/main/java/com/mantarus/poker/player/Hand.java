@@ -1,4 +1,4 @@
-package com.mantarus.poker;
+package com.mantarus.poker.player;
 
 import com.mantarus.poker.cards.Card;
 
@@ -14,24 +14,15 @@ public class Hand {
     private List<Card> cards;
 
     public Hand() {
-        this(new ArrayList<>());
+        this.cards = new ArrayList<>();
     }
 
-    public Hand(List<Card> cards) {
-        this.cards = cards;
-    }
-
-    public Hand(Hand hand) {
-        this(new ArrayList<>(hand.getCards()));
+    public void addCard(Card card) {
+        cards.add(card);
     }
 
     public List<Card> getCards() {
         return cards;
-    }
-
-    public Hand addCard(Card card) {
-        cards.add(card);
-        return this;
     }
 
     public void reset() {
