@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public abstract class RankingUtil {
 
-    public static final Comparator<Player> combinationComparator = (player1, player2) -> {
+    private static final Comparator<Player> combinationComparator = (player1, player2) -> {
         if (player1.getCurrentRanking() != player2.getCurrentRanking()) {
             return player1.getCurrentRanking().getRank() - player2.getCurrentRanking().getRank();
         }
@@ -32,6 +32,10 @@ public abstract class RankingUtil {
             }
         }
         return 0;
+    }
+
+    public static int comparePlayerCombinations(Player player1, Player player2) {
+        return combinationComparator.compare(player1, player2);
     }
 
     public static void checkRanking(Player player, List<Card> communityCards) {

@@ -66,8 +66,8 @@ public class GameRunner {
 
     private void prepareNextGame() {
         //Reset active players state
-        board.getPlayers().asList().forEach(player -> player.getHand().reset());
         board.getPlayers().asList().forEach(player ->  {
+            player.getHand().reset();
             player.setFolded(false);
             player.setCurrentStake(0);
         });
@@ -157,7 +157,7 @@ public class GameRunner {
      * followed by three cards faceup.
      */
     private void flop() {
-        System.out.print("FLOP");
+        System.out.print("FLOP: ");
         board.burnCard();
         board.dealToCommunity(3);
         Utils.printCards(board.getCommunityCards());

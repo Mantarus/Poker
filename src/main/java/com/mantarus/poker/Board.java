@@ -24,11 +24,10 @@ public class Board {
     public final static int NUMBER_OF_PLAYER_CARDS = 2;
     public final static int NUMBER_OF_COMMUNITY_CARDS = 5;
 
-    private CardDeck deck = new CardDeck();
+    private CardDeck deck;
     private PlayersQueue players;
-    //TODO: Do smth to make the dealer useful
     private List<Card> communityCards = new ArrayList<>();
-    private int bank;
+    private int bank = 0;
     private int currentStake = 0;
     private boolean alive;
 
@@ -47,6 +46,7 @@ public class Board {
         }
         players = new PlayersQueue(playerList);
         updateIsAlive();
+        deck = new CardDeck();
     }
 
     public void kickLosers() {
@@ -75,7 +75,7 @@ public class Board {
                 continue;
             }
             Player other = winners.get(0);
-            int comparingResult = RankingUtil.combinationComparator.compare(player, other);
+            int comparingResult = RankingUtil.comparePlayerCombinations(player, other);
             if (comparingResult > 0) {
                 winners.clear();
             } if (comparingResult >= 0) {
@@ -138,9 +138,26 @@ public class Board {
      */
     public void reset() {
         deck = new CardDeck();
-        players.asList().forEach(player -> player.getHand().reset());
         communityCards.clear();
         bank = 0;
+    }
+
+    /**
+     * Get information about the current state of the game
+     * @return object containing copy of board information
+     */
+    public BoardInfo getBoardInfo() {
+        List<PlayerPublicInfo> playerInfoList = players.asList()
+                .stream()
+                .map(Player::getPublicInfo)
+                .collect(Collectors.toList());
+
+        return new BoardInfo(
+                bank,
+                currentStake,
+                communityCards,
+                playerInfoList
+        );
     }
 
     public PlayersQueue getPlayers() {
@@ -172,26 +189,9 @@ public class Board {
     public boolean isAlive() {
         return alive;
     }
+
     private void updateIsAlive() {
         alive = players.size() >= MIN_PLAYERS;
-    }
-
-    /**
-     * Get information about the current state of the game
-     * @return object containing copy of board information
-     */
-    BoardInfo getBoardInfo() {
-        List<PlayerPublicInfo> playerInfoList = players.asList()
-                .stream()
-                .map(Player::getPublicInfo)
-                .collect(Collectors.toList());
-
-        return new BoardInfo(
-                bank,
-                currentStake,
-                communityCards,
-                playerInfoList
-        );
     }
 
 }

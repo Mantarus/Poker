@@ -11,7 +11,6 @@ import com.mantarus.poker.cards.Card;
 import com.mantarus.poker.info.PlayerPrivateInfo;
 import com.mantarus.poker.info.PlayerPublicInfo;
 import com.mantarus.poker.ranking.Ranking;
-import com.mantarus.poker.strategy.SimpleBotStrategy;
 import com.mantarus.poker.strategy.Strategy;
 
 import static java.lang.Math.min;
