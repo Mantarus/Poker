@@ -24,7 +24,7 @@ public abstract class RankingUtil {
         List<Card> kickers1 = player1.getKickers();
         List<Card> kickers2 = player2.getKickers();
         if (kickers1.size() != kickers2.size()) {
-            throw new PokerException("Can compare only if quantity of kickers is equal");
+            throw new PokerException("Сравнение возможно, только когда количество кикеров одинаково");
         }
         for (int i = 0; i < kickers1.size(); i++) {
             if (kickers1.get(i).getRankToInt() != kickers2.get(i).getRankToInt()) {
@@ -67,26 +67,26 @@ public abstract class RankingUtil {
     }
 
     private static void checkPairs(Player player, List<Card> cards) {
-        // Try to find the first pair of cards
+        // Попытка найти первую пару карт
         List<Card> pairedCards = findHighestSameRanked(cards, 2);
 
-        // If not found, do nothing
+        // Если не найдена, ничего не делать
         if (pairedCards.isEmpty()) {
             return;
         }
 
-        // If found, set current player combination and ranking
+        // Если найдена, проставить комбинацию игроку player
         player.setCombination(pairedCards);
         player.setCurrentRanking(Ranking.ONE_PAIR);
 
-        // Then build the list of remaining cards, excluding the pair found
+        // Затем составить список оставшихся карт
         List<Card> remainingCards = new ArrayList<>();
         remainingCards.addAll(cards);
         remainingCards.removeAll(pairedCards);
 
-        // Try to find the second pair of cards and add it to resulting combination
+        // Попытка найти вторую пару карт и добавить её в комбинацию
         pairedCards.addAll(findHighestSameRanked(remainingCards, 2));
-        // If found and added, set current player combination and ranking
+        // Если найдена и добавлена, проставить комбинацию игроку player
         if (pairedCards.size() == 4) {
             player.setCurrentRanking(Ranking.TWO_PAIRS);
         }

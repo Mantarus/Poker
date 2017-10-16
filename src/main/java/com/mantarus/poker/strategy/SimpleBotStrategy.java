@@ -9,14 +9,13 @@ import com.mantarus.poker.info.BoardInfo;
 
 public class SimpleBotStrategy implements Strategy {
 
-    //Done
     @Override
     public Action trade(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions) {
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            System.out.println("¯\\_(ツ)_/¯");
-//        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("Произошла ошибка!");
+        }
         int randResult = Utils.getRandomInt();
 
         if (randResult < 5 && possibleActions.contains(ActionEnum.FOLD))

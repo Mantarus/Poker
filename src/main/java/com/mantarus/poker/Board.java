@@ -39,7 +39,7 @@ public class Board {
 
         for (int i = 1; i < playersCount; i++) {
             if (playerList.size() == MAX_PLAYERS) {
-                throw new PokerException("Too many players");
+                throw new PokerException("Слишком много игроков");
             }
             Player player = new Player(initialBalance, new SimpleBotStrategy());
             playerList.add(player);
@@ -53,7 +53,7 @@ public class Board {
         for (Player player : players.asList()) {
             if (player.getBalance() <= 0) {
                 leave(player);
-                System.out.println(String.format("%s left the game", player.getName()));
+                System.out.println(String.format("%s покинул игру", player.getName()));
             }
         }
     }
@@ -87,7 +87,7 @@ public class Board {
     }
 
     /**
-     * Deal cards to players before the game
+     * Раздает карты перед игрой
      */
     public void dealToPlayers() {
         IntStream.range(0, NUMBER_OF_PLAYER_CARDS)
@@ -95,46 +95,45 @@ public class Board {
     }
 
     /**
-     * Deal cards to community cards
-     * @param amount amount of dealing cards
+     * Открывает карты на столе
+     * @param amount количество открываемых карт
      */
     public void dealToCommunity(int amount) {
-        //TODO: Exception checking should be moved to Board
         if (amount < 0) {
-            throw new IllegalArgumentException("Amount of cards can be only a positive value");
+            throw new IllegalArgumentException("Количество карт должно быть строго положительным");
         }
         if (amount + communityCards.size() > NUMBER_OF_COMMUNITY_CARDS) {
-            throw new IllegalArgumentException("Amount of community cards after dealing can't be more than maximum value");
+            throw new IllegalArgumentException("Количество карт на столе не должно превысить максимального количества");
         }
         IntStream.range(0, amount)
                 .forEach(i -> communityCards.add(deck.pop()));
     }
 
     /**
-     * Discard one card from the deck
+     * Сбрасывает одну карту из колоды
      */
     public void burnCard() {
         deck.pop();
     }
 
     /**
-     * Recalculate combinations for every player
+     * Пересчитать карточные комбинации для всех игроков
      */
     public void recalculateCombinations() {
         players.asList().forEach(player -> RankingUtil.checkRanking(player, communityCards));
     }
 
     /**
-     * Increase balance of chosen player in case of his victory
-     * @param player chosen player
-     * @param increment
+     * Увеличить баланс игрока в случае его победы
+     * @param player выбранный игрок
+     * @param increment количество фишек, на которое требуется увеличить баланс
      */
     public void incrementBalance(Player player, int increment) {
         player.setBalance(player.getBalance() + increment);
     }
 
     /**
-     * Reset cards after the game
+     * Сбрасывает карты в конце игры
      */
     public void reset() {
         deck = new CardDeck();
@@ -143,8 +142,7 @@ public class Board {
     }
 
     /**
-     * Get information about the current state of the game
-     * @return object containing copy of board information
+     * @return обьект, содержащий копию информации о текущем состоянии стола
      */
     public BoardInfo getBoardInfo() {
         List<PlayerPublicInfo> playerInfoList = players.asList()
@@ -173,7 +171,7 @@ public class Board {
     }
     public void setBank(int bank) {
         this.bank = bank;
-        System.out.println(String.format("Bank is %d now", bank));
+        System.out.println(String.format("Размер банка: %d", bank));
     }
     public void clearBank() {
         bank = 0;

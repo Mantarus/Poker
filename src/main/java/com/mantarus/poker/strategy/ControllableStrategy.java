@@ -11,22 +11,22 @@ public class ControllableStrategy implements Strategy {
 
     @Override
     public Action trade(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<Action.ActionEnum> possibleActions) {
-        //Print information
+        // Вывести информацию об игроке
         printInfo(playerInfo, boardInfo, possibleActions);
 
-        // Read and parse action
+        // Считать и распознать действие
         Action action;
         boolean ok;
         try {
             do {
                 ok = true;
-                System.out.print("Your action: ");
+                System.out.print("Ваше действие: ");
                 action = parseAction(reader.readLine());
                 // TODO: Check possibility of negative balance more careful
                 int safeStake = playerInfo.balance - (boardInfo.currentStake - playerInfo.currentStake);
                 if (action == null || !possibleActions.contains(action.getAction()) || action.getAmount() > safeStake) {
                     ok = false;
-                    System.out.println("Nope!");
+                    System.out.println("Невозможно выполнить данное действие!");
                 }
             } while (!ok);
         } catch (Exception e) {
@@ -37,11 +37,11 @@ public class ControllableStrategy implements Strategy {
     }
 
     private void printInfo(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<Action.ActionEnum> possibleActions) {
-        // Print board information
+        // Вывести инофрмацию об игровом столе
         System.out.println(String.format("Bank:          %d", boardInfo.bank));
         System.out.println(String.format("Current stake: %d", boardInfo.currentStake));
         System.out.println();
-        //Print information about players
+        // Вывести инофрмацию об игроках
         boardInfo.playersInfo.forEach(player -> {
             System.out.println(String.format("%s - %sfolded, balance: %d, stake: %d",
                     player.name,

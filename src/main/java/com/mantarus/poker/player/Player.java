@@ -29,14 +29,14 @@ public class Player {
     private List<Card> kickers = new ArrayList<>();
 
     public Player(int balance, Strategy strategy) {
-        this.name = String.format("Player %d", ++count);
+        this.name = String.format("Игрок %d", ++count);
         this.strategy = strategy;
         this.balance = balance;
     }
 
     public int playSmallBlind(int bet) {
         bet = min(bet, balance);
-        System.out.println(String.format("%s plays SMALL BLIND (%d)", name, bet));
+        System.out.println(String.format("%s играет МАЛЫЙ БЛАЙНД (%d)", name, bet));
         setCurrentStake(bet);
         setBalance(balance - bet);
         return bet;
@@ -44,7 +44,7 @@ public class Player {
 
     public int playBigBlind(int bet) {
         bet = min(bet * 2, balance);
-        System.out.println(String.format("%s plays BIG BLIND (%d)", name, bet));
+        System.out.println(String.format("%s играет БОЛЬШОЙ БЛАЙНД (%d)", name, bet));
         setCurrentStake(bet);
         setBalance(balance - bet);
         return bet;
@@ -79,22 +79,9 @@ public class Player {
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Strategy getStrategy() {
-        return strategy;
-    }
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
-    }
 
     public Hand getHand() {
         return hand;
-    }
-    public void setHand(Hand hand) {
-        this.hand = hand;
     }
 
     public boolean isFolded() {
@@ -109,7 +96,7 @@ public class Player {
     }
     public void setBalance(int balance) {
         this.balance = balance;
-        System.out.println(String.format("%s balance is %d", name, balance));
+        System.out.println(String.format("Баланс %s теперь %d", name, balance));
     }
 
     public int getCurrentStake() {
@@ -117,7 +104,7 @@ public class Player {
     }
     public void setCurrentStake(int currentStake) {
         this.currentStake = currentStake;
-        System.out.println(String.format("%s stake is %d", name, currentStake));
+        System.out.println(String.format("Ставка %s теперь %d", name, currentStake));
     }
 
     public Ranking getCurrentRanking() {

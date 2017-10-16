@@ -9,15 +9,15 @@ import java.util.Set;
 public interface Strategy {
 
     /**
-     * Give the player the opportunity to choose action
-     * @param playerInfo information about player taking action
-     * @param boardInfo information about the game
-     * @param possibleActions set of allowed actions
+     * Интерфейс, позволяющий игроку совершать какое-либо действие в ходе раунда торговли
+     * @param playerInfo информация о игроке, совершающем действие
+     * @param boardInfo информация о текущей ситуации на игровом столе
+     * @param possibleActions набор разрешенных действий
      * @return
-     * FOLD, 0 - player discards his cards <br>
-     * CHECK, 0 - player does nothing <br>
-     * CALL, 0 - player equalizes bet <br>
-     * BET/RAISE, amount - player raises the bet
+     * FOLD, 0 - игрок сбрасывает карты <br>
+     * CHECK, 0 - игрок ничего не делает <br>
+     * CALL, 0 - игрок уравнивает ставку <br>
+     * BET/RAISE, amount - игрок поднимает ставку
      */
     Action trade(PlayerPrivateInfo playerInfo, BoardInfo boardInfo, Set<ActionEnum> possibleActions);
 
